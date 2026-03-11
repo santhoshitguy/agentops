@@ -1,0 +1,83 @@
+@if (visibleSignal()) {
+  <div class="modal-backdrop" (click)="onBackdropClick($event)">
+    <div class="modal-card">
+      <!-- Header -->
+      <div class="modal-header">
+        <div class="header-left">
+          <span class="agent-icon">&#x1F916;</span>
+          <div class="header-info">
+            <h3 class="agent-name">{{ agentNameSignal() }}</h3>
+            <span class="action-type-badge">{{ actionTypeSignal() }}</span>
+          </div>
+        </div>
+        <div class="risk-badge" [style.color]="riskColor()" [style.background]="riskBgColor()" [style.border-color]="riskColor()">
+          <span class="risk-dot" [style.background]="riskColor()"></span>
+          {{ riskLevelSignal() | uppercase }} RISK
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <!-- Action description -->
+        <div class="section">
+          <label class="section-label">Proposed Action</label>
+          <p class="action-text">{{ actionSignal() }}</p>
+        </div>
+
+        <!-- Reasoning -->
+        @if (reasoningSignal()) {
+          <div class="section">
+            <label class="section-label">Agent Reasoning</label>
+            <blockquote class="reasoning-block">
+              {{ reasoningSignal() }}
+            </blockquote>
+          </div>
+        }
+
+        <!-- Proposed input -->
+        @if (proposedInputSignal()) {
+          <div class="section">
+            <label class="section-label">Input Data</label>
+            <pre class="input-code">{{ proposedInputSignal() }}</pre>
+          </div>
+        }
+
+        <!-- Modify input area -->
+        @if (showModifyInput()) {
+          <div class="section modify-section">
+            <label class="section-label">Modified Input</label>
+            <textarea
+              class="modify-textarea"
+              [ngModel]="modifiedInput()"
+              (ngModelChange)="modifiedInput.set($event)"
+              rows="4"
+              placeholder="Edit the input data...">
+            </textarea>
+          </div>
+        }
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        @if (showModifyInput()) {
+          <button class="btn btn-modify-submit" (click)="onModifySubmit()">
+            Submit Modified
+          </button>
+          <button class="btn btn-cancel" (click)="onModifyToggle()">
+            Cancel Edit
+          </button>
+        } @else {
+          <button class="btn btn-approve" (click)="onApprove()">
+            <span class="btn-icon">&#x2714;</span> Approve
+          </button>
+          <button class="btn btn-modify" (click)="onModifyToggle()">
+            <span class="btn-icon">&#x270E;</span> Modify
+          </button>
+          <button class="btn btn-reject" (click)="onReject()">
+            <span class="btn-icon">&#x2718;</span> Reject
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

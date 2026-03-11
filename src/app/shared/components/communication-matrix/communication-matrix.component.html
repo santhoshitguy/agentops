@@ -1,0 +1,12 @@
+<div class="communication-matrix">
+    @if (matrixData().length === 0) {
+    <div class="empty-state">
+        <p>No communication data available</p>
+    </div>
+    } @else {
+    <ngx-charts-heat-map [view]="[600, 400]" [scheme]="colorScheme" [results]="heatmapData" [xAxis]="true"
+        [yAxis]="true" [showXAxisLabel]="true" [showYAxisLabel]="true" [xAxisLabel]="'To Agent'"
+        [yAxisLabel]="'From Agent'" [gradient]="true" [animations]="true">
+    </ngx-charts-heat-map>
+    }
+</div>

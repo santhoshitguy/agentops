@@ -1,0 +1,24 @@
+<div class="dashboard">
+    <!-- Main Content Area - 3 Column Layout -->
+    <div class="main-content">
+        <!-- Left Panel - Metrics -->
+        <aside class="left-panel">
+            <app-metrics-panel [tokens]="tokenCount()" [maxTokens]="maxTokens()" [cost]="totalCost()"
+                [context]="{ used: contextUsed(), total: contextTotal() }"></app-metrics-panel>
+        </aside>
+
+        <!-- Center Panel - Agent Network -->
+        <main class="center-panel">
+            <app-agent-network [networkNodes]="nodes()" [networkConnections]="connections()" [width]="networkWidth()"
+                [height]="networkHeight()" (nodeClick)="onNodeClick($event)"></app-agent-network>
+        </main>
+
+        <!-- Right Panel - Live Terminal -->
+        <aside class="right-panel">
+            <div class="terminal-wrapper">
+                <app-terminal-panel [logs]="logs()" [streaming]="isStreaming()" [status]="connectionStatus()"
+                    panelTitle="Live Stream Terminal"></app-terminal-panel>
+            </div>
+        </aside>
+    </div>
+</div>

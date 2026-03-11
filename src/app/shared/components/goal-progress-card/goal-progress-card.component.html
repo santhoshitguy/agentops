@@ -1,0 +1,75 @@
+<div class="goal-card" [style.border-left-color]="getStatusColor(goal().status)">
+    <!-- Header -->
+    <div class="goal-header">
+        <div class="goal-title">
+            <span class="status-icon" [style.color]="getStatusColor(goal().status)">
+                {{ getStatusIcon(goal().status) }}
+            </span>
+            <h3>{{ goal().name }}</h3>
+        </div>
+        <span class="priority-badge" [style.background-color]="getPriorityColor(goal().priority)">
+            {{ goal().priority }}
+        </span>
+    </div>
+
+    <!-- Description -->
+    <p class="goal-description">{{ goal().description }}</p>
+
+    <!-- Metrics -->
+    <div class="goal-metrics">
+        <div class="metric-row">
+            <span class="metric-label">Target:</span>
+            <span class="metric-value">{{ formatValue(goal().targetValue, goal().unit) }}</span>
+        </div>
+        <div class="metric-row">
+            <span class="metric-label">Current:</span>
+            <span class="metric-value current" [style.color]="getStatusColor(goal().status)">
+                {{ formatValue(goal().currentValue, goal().unit) }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-section">
+        <div class="progress-header">
+            <span class="progress-label">Progress</span>
+            <span class="progress-value" [style.color]="getStatusColor(goal().status)">
+                {{ goal().progress }}%
+            </span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="goal().progress"
+                [style.background-color]="getStatusColor(goal().status)">
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="goal-timeline">
+        <div class="timeline-item">
+            <span class="timeline-label">Started:</span>
+            <span class="timeline-date">{{ goal().startDate.toLocaleDateString() }}</span>
+        </div>
+        <div class="timeline-item">
+            <span class="timeline-label">Target:</span>
+            <span class="timeline-date">{{ goal().targetDate.toLocaleDateString() }}</span>
+        </div>
+        @if (getDaysRemaining(goal().targetDate) > 0) {
+        <div class="timeline-item">
+            <span class="timeline-label">Days Remaining:</span>
+            <span class="days-remaining" [class.urgent]="getDaysRemaining(goal().targetDate) < 7">
+                {{ getDaysRemaining(goal().targetDate) }}
+            </span>
+        </div>
+        }
+    </div>
+
+    <!-- Tags -->
+    @if (goal().tags) {
+    <div class="goal-tags">
+        @for (tag of goal().tags; track tag) {
+        <span class="tag">{{ tag }}</span>
+        }
+    </div>
+    }
+</div>

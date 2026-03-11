@@ -1,0 +1,71 @@
+<div class="heatmap-panel">
+    <div class="heatmap-header">
+        <div class="header-title">
+            <lucide-icon [img]="gridIcon" [size]="16" color="var(--accent-cyan)" />
+            <span>Tool Usage Heatmap</span>
+        </div>
+        <div class="metric-toggle">
+            <button class="metric-btn" [class.active]="metric() === 'calls'" (click)="setMetric('calls')">
+                Calls
+            </button>
+            <button class="metric-btn" [class.active]="metric() === 'latency'" (click)="setMetric('latency')">
+                Latency
+            </button>
+            <button class="metric-btn" [class.active]="metric() === 'errors'" (click)="setMetric('errors')">
+                Errors
+            </button>
+        </div>
+    </div>
+
+    <div class="heatmap-body">
+        <!-- Hour labels -->
+        <div class="heatmap-grid">
+            <div class="grid-corner"></div>
+            <div class="hour-labels">
+                @for (h of hours; track h) {
+                @if (h % 3 === 0) {
+                <span class="hour-label" [style.grid-column]="h + 1">{{ formatHour(h) }}</span>
+                }
+                }
+            </div>
+
+            <!-- Rows -->
+            @for (row of heatmapRows(); track row.toolName) {
+            <div class="row-label">{{ row.toolName }}</div>
+            <div class="row-cells">
+                @for (cell of row.hourData; track cell.hour) {
+                <div class="heatmap-cell" [style.background]="getCellColor(cell.value)"
+                    [class.has-value]="cell.value > 0"
+                    (mouseenter)="onCellHover({ hour: cell.hour, day: 0, toolId: row.toolName, callCount: cell.count, avgLatency: cell.latency, errorRate: cell.errorRate })"
+                    (mouseleave)="onCellHover(null)">
+                </div>
+                }
+            </div>
+            }
+        </div>
+
+        <!-- Tooltip -->
+        @if (hoveredCell()) {
+        <div class="heatmap-tooltip">
+            <span class="tooltip-tool">{{ hoveredCell()!.toolId }}</span>
+            <span class="tooltip-time">{{ formatHour(hoveredCell()!.hour) }}</span>
+            <div class="tooltip-stats">
+                <span>{{ hoveredCell()!.callCount }} calls</span>
+                <span>{{ hoveredCell()!.avgLatency }}ms avg</span>
+                <span>{{ (hoveredCell()!.errorRate * 100).toFixed(1) }}% err</span>
+            </div>
+        </div>
+        }
+
+        <!-- Legend -->
+        <div class="heatmap-legend">
+            <span class="legend-label">Less</span>
+            <div class="legend-cells">
+                @for (i of [0, 0.2, 0.4, 0.6, 0.8, 1]; track i) {
+                <div class="legend-cell" [style.background]="getCellColor(i * maxValue())"></div>
+                }
+            </div>
+            <span class="legend-label">More</span>
+        </div>
+    </div>
+</div>

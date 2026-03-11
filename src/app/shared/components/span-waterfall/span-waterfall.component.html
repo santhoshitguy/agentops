@@ -1,0 +1,83 @@
+<div class="span-waterfall">
+    <!-- Timeline Header -->
+    <div class="waterfall-header">
+        <div class="span-name-col">Span Name</div>
+        <div class="timeline-col">
+            <div class="timeline-labels">
+                <span>0ms</span>
+                <span>{{ (traceDuration() / 4).toFixed(0) }}ms</span>
+                <span>{{ (traceDuration() / 2).toFixed(0) }}ms</span>
+                <span>{{ (traceDuration() * 3 / 4).toFixed(0) }}ms</span>
+                <span>{{ traceDuration().toFixed(0) }}ms</span>
+            </div>
+        </div>
+        <div class="duration-col">Duration</div>
+    </div>
+
+    <!-- Waterfall Rows -->
+    <div class="waterfall-body">
+        @if (waterfallItems().length === 0) {
+        <div class="empty-state">
+            <p>No spans to display</p>
+        </div>
+        } @else {
+        @for (item of waterfallItems(); track item.span.spanId) {
+        <div class="waterfall-row" [class.error-row]="item.span.status.code === 'ERROR'"
+            [attr.title]="formatAttributes(item.span.attributes)">
+
+            <!-- Span Name Column -->
+            <div class="span-name-col" [style.padding-left.px]="item.indentPx">
+                <span class="kind-icon">{{ getKindIcon(item.span.kind) }}</span>
+                <span class="span-name">{{ item.span.name }}</span>
+                <span class="status-icon" [class.status-ok]="item.span.status.code === 'OK'"
+                    [class.status-error]="item.span.status.code === 'ERROR'">
+                    {{ getStatusIcon(item.span.status.code) }}
+                </span>
+                @if (item.hasChildren) {
+                <span class="has-children">▼</span>
+                }
+            </div>
+
+            <!-- Timeline Column (Gantt Bar) -->
+            <div class="timeline-col">
+                <div class="timeline-track">
+                    <div class="span-bar" [style.left.%]="item.leftPercent" [style.width.%]="item.widthPercent"
+                        [style.background-color]="getSpanColor(item)">
+                        <div class="span-bar-label">{{ item.durationFormatted }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Duration Column -->
+            <div class="duration-col">
+                <span class="duration-value">{{ item.durationFormatted }}</span>
+            </div>
+        </div>
+
+        <!-- Error Message (if present) -->
+        @if (item.span.status.code === 'ERROR' && item.span.status.message) {
+        <div class="error-message-row">
+            <div class="error-message">
+                <span class="error-label">Error:</span>
+                {{ item.span.status.message }}
+            </div>
+        </div>
+        }
+
+        <!-- Events (if present) -->
+        @if (item.span.events.length > 0) {
+        <div class="events-row">
+            <div class="events-list">
+                @for (event of item.span.events; track event.name + event.timestamp) {
+                <div class="event-item">
+                    <span class="event-name">{{ event.name }}</span>
+                    <span class="event-time">{{ event.timestamp.toLocaleTimeString() }}</span>
+                </div>
+                }
+            </div>
+        </div>
+        }
+        }
+        }
+    </div>
+</div>

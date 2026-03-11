@@ -1,0 +1,54 @@
+<div [ngClass]="meterClasses()">
+  <!-- Header -->
+  <div class="meter-header">
+    <span class="meter-label">{{ meterLabel() }}</span>
+    <span class="meter-values">
+      <span class="current-value" [style.color]="zoneColor()">
+        {{ currentValue() | currency:'USD':'symbol':'1.2-2' }}
+      </span>
+      <span class="separator">/</span>
+      <span class="budget-value">{{ budgetValue() | currency:'USD':'symbol':'1.2-2' }}</span>
+    </span>
+  </div>
+
+  <!-- Bar Track -->
+  <div class="meter-track">
+    <!-- Fill bar -->
+    <div
+      class="meter-fill"
+      [style.width.%]="fillWidth()"
+      [style.background-color]="zoneColor()"
+      [style.box-shadow]="'0 0 12px ' + zoneGlow()">
+    </div>
+
+    <!-- Budget line marker -->
+    <div
+      class="marker budget-marker"
+      [style.left.%]="budgetMarkerPosition()">
+      <span class="marker-line"></span>
+      <span class="marker-label">Budget</span>
+    </div>
+
+    <!-- Projected line marker -->
+    @if (projectedValue() > 0) {
+      <div
+        class="marker projected-marker"
+        [style.left.%]="projectedMarkerPosition()">
+        <span class="marker-line dashed"></span>
+        <span class="marker-label">Projected</span>
+      </div>
+    }
+  </div>
+
+  <!-- Footer -->
+  <div class="meter-footer">
+    <span class="percentage" [style.color]="zoneColor()">
+      {{ percentage() | number:'1.0-1' }}% used
+    </span>
+    @if (projectedValue() > 0) {
+      <span class="projected-label">
+        Projected: {{ projectedValue() | currency:'USD':'symbol':'1.2-2' }}
+      </span>
+    }
+  </div>
+</div>

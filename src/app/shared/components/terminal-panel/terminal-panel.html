@@ -1,0 +1,125 @@
+<div class="terminal-container" [class.expanded]="isExpanded()">
+    <!-- Terminal Header -->
+    <div class="terminal-header">
+        <div class="terminal-controls">
+            <span class="control-dot red"></span>
+            <span class="control-dot yellow"></span>
+            <span class="control-dot green"></span>
+        </div>
+        <div class="terminal-title">
+            <svg class="terminal-icon" viewBox="0 0 24 24" width="16" height="16">
+                <path d="M4 17l6-6-6-6M12 19h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" fill="none" />
+            </svg>
+            <span>{{ title() }}</span>
+            @if (connectionStatus() === 'connected') {
+            <span class="status-badge connected">
+                <span class="pulse-dot"></span>
+                Live
+            </span>
+            } @else if (connectionStatus() === 'connecting') {
+            <span class="status-badge connecting">Connecting...</span>
+            } @else {
+            <span class="status-badge disconnected">Disconnected</span>
+            }
+        </div>
+        <div class="terminal-actions">
+            <button class="action-btn" (click)="onClear()" title="Clear logs">
+                <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        fill="none" />
+                </svg>
+            </button>
+            <button class="action-btn" (click)="onDownload()" title="Download logs">
+                <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                </svg>
+            </button>
+            <button class="action-btn" (click)="toggleAutoScroll()" [class.active]="autoScroll()" title="Auto-scroll">
+                <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path d="M12 5v14M19 12l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" fill="none" />
+                </svg>
+            </button>
+            <button class="action-btn" (click)="toggleExpand()" title="{{ isExpanded() ? 'Collapse' : 'Expand' }}">
+                <svg viewBox="0 0 24 24" width="16" height="16">
+                    @if (isExpanded()) {
+                    <path d="M8 3v3a2 2 0 01-2 2H3m18 0h-3a2 2 0 01-2-2V3m0 18v-3a2 2 0 012-2h3M3 16h3a2 2 0 012 2v3"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        fill="none" />
+                    } @else {
+                    <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        fill="none" />
+                    }
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="terminal-filter">
+        <div class="filter-buttons">
+            @for (level of logLevels; track level) {
+            <button class="filter-btn" [class.active]="isLevelActive(level)" [class]="'filter-' + level"
+                (click)="toggleLevel(level)">
+                {{ level }}
+                <span class="count">{{ getLevelCount(level) }}</span>
+            </button>
+            }
+        </div>
+        <div class="search-box">
+            <svg viewBox="0 0 24 24" width="14" height="14">
+                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none" />
+                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <input type="text" placeholder="Search logs..." [value]="searchQuery()" (input)="onSearch($event)" />
+        </div>
+    </div>
+
+    <!-- Log Output -->
+    <div class="terminal-output" #outputContainer>
+        @for (log of filteredLogs(); track log.id; let i = $index) {
+        <div class="log-entry" [class]="'level-' + log.level" [style.animation-delay.ms]="i * 50">
+            <span class="log-timestamp">{{ formatTime(log.timestamp) }}</span>
+            <span class="log-level" [class]="'badge-' + log.level">{{ log.level.toUpperCase() }}</span>
+            <span class="log-agent">{{ log.agentName }}</span>
+            <span class="log-message" [innerHTML]="highlightMessage(log.message)"></span>
+        </div>
+        } @empty {
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24" width="48" height="48">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"
+                    fill="none" />
+                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2" fill="none" />
+            </svg>
+            <p>No logs to display</p>
+            <span>Logs will appear here when agents start processing</span>
+        </div>
+        }
+
+        <!-- Typing indicator -->
+        @if (isStreaming()) {
+        <div class="typing-indicator">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+        }
+    </div>
+
+    <!-- Terminal Footer -->
+    <div class="terminal-footer">
+        <span class="log-count">{{ totalLogs() }} entries</span>
+        <span class="separator">|</span>
+        <span class="filtered-count">{{ filteredLogs().length }} shown</span>
+        @if (isStreaming()) {
+        <span class="streaming-indicator">
+            <span class="pulse"></span>
+            Streaming...
+        </span>
+        }
+    </div>
+</div>

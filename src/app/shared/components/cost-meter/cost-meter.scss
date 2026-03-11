@@ -1,0 +1,160 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.cost-meter {
+  padding: 0.75rem 0;
+}
+
+.meter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.meter-label {
+  font-size: 0.75rem;
+  font-weight: var(--font-semibold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.meter-values {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  font-family: var(--font-display);
+}
+
+.current-value {
+  font-size: 0.875rem;
+  font-weight: var(--font-bold);
+}
+
+.separator {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.budget-value {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+// Track
+.meter-track {
+  position: relative;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  overflow: visible;
+}
+
+.meter-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease-out, background-color 0.4s ease;
+  min-width: 2px;
+}
+
+// Markers
+.marker {
+  position: absolute;
+  top: -4px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+.marker-line {
+  display: block;
+  width: 2px;
+  height: 16px;
+  background: var(--text-secondary);
+  border-radius: 1px;
+
+  &.dashed {
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--text-muted) 0px,
+      var(--text-muted) 3px,
+      transparent 3px,
+      transparent 6px
+    );
+  }
+}
+
+.marker-label {
+  margin-top: 4px;
+  font-size: 0.5625rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.budget-marker {
+  .marker-line {
+    background: rgba(255, 255, 255, 0.5);
+    height: 18px;
+  }
+}
+
+.projected-marker {
+  .marker-line {
+    height: 18px;
+  }
+  .marker-label {
+    color: #a855f7;
+  }
+}
+
+// Footer
+.meter-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.625rem;
+}
+
+.percentage {
+  font-size: 0.6875rem;
+  font-weight: var(--font-semibold);
+  font-family: var(--font-display);
+}
+
+.projected-label {
+  font-size: 0.6875rem;
+  color: #a855f7;
+}
+
+// Zone glow effects
+.zone-safe .meter-fill {
+  background: linear-gradient(90deg, #059669, #10b981);
+}
+
+.zone-warning .meter-fill {
+  background: linear-gradient(90deg, #d97706, #f59e0b);
+}
+
+.zone-danger .meter-fill {
+  background: linear-gradient(90deg, #dc2626, #ef4444);
+  animation: danger-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes danger-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.6);
+  }
+}

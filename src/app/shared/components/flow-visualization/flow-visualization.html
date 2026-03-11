@@ -1,0 +1,196 @@
+<div class="flow-vis-panel">
+    <div class="flow-vis-header">
+        <div class="header-title">
+            <lucide-icon [img]="branchIcon" [size]="16" color="var(--accent-purple)" />
+            <span>Decision Flow</span>
+        </div>
+        @if (flowSignal(); as flow) {
+        <div class="header-meta">
+            <span class="meta-steps">{{ flow.thoughts.length }} steps</span>
+            <span class="meta-depth">depth {{ flow.maxDepth }}</span>
+            @if (flow.loopCount > 0) {
+            <span class="meta-loops">
+                <lucide-icon [img]="loopIcon" [size]="11" color="var(--accent-orange)" />
+                {{ flow.loopCount }} loops
+            </span>
+            }
+        </div>
+        }
+    </div>
+
+    <div class="flow-vis-body">
+        @if (flowSignal(); as flow) {
+        <svg [attr.viewBox]="viewBox()" class="flow-svg" preserveAspectRatio="xMidYMid meet">
+            <defs>
+                <!-- Glow filters -->
+                <filter id="flow-glow-cyan" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="4" result="blur" />
+                    <feFlood flood-color="var(--accent-cyan)" flood-opacity="0.3" />
+                    <feComposite in2="blur" operator="in" result="glow" />
+                    <feMerge>
+                        <feMergeNode in="glow" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+                <filter id="flow-glow-green" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="4" result="blur" />
+                    <feFlood flood-color="var(--accent-green)" flood-opacity="0.3" />
+                    <feComposite in2="blur" operator="in" result="glow" />
+                    <feMerge>
+                        <feMergeNode in="glow" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+                <filter id="flow-glow-purple" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="4" result="blur" />
+                    <feFlood flood-color="var(--accent-purple)" flood-opacity="0.3" />
+                    <feComposite in2="blur" operator="in" result="glow" />
+                    <feMerge>
+                        <feMergeNode in="glow" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+
+                <!-- Arrow -->
+                <marker id="flow-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <path d="M0,0 L8,3 L0,6" fill="var(--accent-cyan)" opacity="0.5" />
+                </marker>
+            </defs>
+
+            <!-- Background grid -->
+            <g opacity="0.025">
+                @for (x of [0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480, 520, 560, 600, 640]; track x) {
+                <line [attr.x1]="x" y1="0" [attr.x2]="x" [attr.y2]="svgHeight()" stroke="var(--text-primary)"
+                    stroke-width="1" />
+                }
+            </g>
+
+            <!-- Edges -->
+            @for (edge of flowEdges(); track edge.from.id + edge.to.id) {
+            <path [attr.d]="edge.path" fill="none"
+                [attr.stroke]="edge.active ? 'var(--accent-cyan)' : 'var(--text-disabled)'"
+                [attr.stroke-width]="edge.active ? 2 : 1" stroke-dasharray="6 3" marker-end="url(#flow-arrow)"
+                [attr.opacity]="edge.active ? 0.6 : 0.2">
+                @if (edge.active) {
+                <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="1.2s"
+                    repeatCount="indefinite" />
+                }
+            </path>
+            }
+
+            <!-- Nodes -->
+            @for (node of flowNodes(); track node.id) {
+            <g [attr.transform]="'translate(' + node.x + ',' + node.y + ')'" class="flow-node"
+                [class.highlighted]="isHighlighted(node.step.stepNumber)"
+                [class.active-node]="node.step.status === 'active'" (click)="onNodeClick(node)"
+                (mouseenter)="onNodeHover(node)" (mouseleave)="onNodeHover(null)" style="cursor: pointer;">
+
+                <!-- Node background -->
+                <rect [attr.width]="node.width" [attr.height]="node.height" rx="10" ry="10" fill="var(--bg-deep)"
+                    [attr.stroke]="getTypeColor(node.step.type)" stroke-width="1.5"
+                    [attr.opacity]="node.step.status === 'pending' || node.step.status === 'skipped' ? 0.4 : 1" />
+
+                <!-- Step number badge -->
+                <circle cx="14" cy="14" r="10" [attr.fill]="getTypeColor(node.step.type)" opacity="0.15" />
+                <text x="14" y="18" text-anchor="middle" font-size="10" font-weight="700"
+                    [attr.fill]="getTypeColor(node.step.type)" font-family="var(--font-mono)">
+                    {{ node.step.stepNumber }}
+                </text>
+
+                <!-- Type label -->
+                <text x="30" y="18" font-size="9" font-weight="600" [attr.fill]="getTypeColor(node.step.type)"
+                    text-transform="uppercase" letter-spacing="0.05em">
+                    {{ getTypeLabel(node.step.type) }}
+                </text>
+
+                <!-- Tool name if tool_call -->
+                @if (node.step.toolCalled) {
+                <text [attr.x]="node.width - 8" y="18" text-anchor="end" font-size="9" font-weight="500"
+                    fill="var(--text-muted)" font-family="var(--font-mono)">
+                    {{ node.step.toolCalled }}
+                </text>
+                }
+
+                <!-- Action text -->
+                <text x="14" y="38" font-size="11" font-weight="500" fill="var(--text-secondary)">
+                    {{ truncateText(node.step.action, 28) }}
+                </text>
+
+                <!-- Bottom row: duration + status -->
+                <text x="14" [attr.y]="node.height - 10" font-size="9" fill="var(--text-muted)"
+                    font-family="var(--font-mono)">
+                    {{ formatDuration(node.step.duration) }}
+                </text>
+                <text x="70" [attr.y]="node.height - 10" font-size="9" fill="var(--text-muted)"
+                    font-family="var(--font-mono)">
+                    {{ node.step.tokensUsed }} tok
+                </text>
+
+                <!-- Status indicator -->
+                <circle [attr.cx]="node.width - 14" [attr.cy]="node.height - 14" r="5"
+                    [attr.fill]="getStatusColor(node.step.status)" />
+                @if (node.step.status === 'active') {
+                <circle [attr.cx]="node.width - 14" [attr.cy]="node.height - 14" r="8"
+                    fill="none" [attr.stroke]="getStatusColor(node.step.status)"
+                    stroke-width="1.5" opacity="0.4">
+                    <animate attributeName="r" values="5;10;5" dur="2s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite" />
+                </circle>
+                }
+
+                <!-- Loop indicator -->
+                @if (node.step.loopDetected) {
+                <g [attr.transform]="'translate(' + (node.width - 34) + ', 6)'">
+                    <circle cx="6" cy="6" r="8" fill="var(--accent-orange)" opacity="0.15" />
+                    <text x="6" y="10" text-anchor="middle" font-size="8" font-weight="700"
+                        fill="var(--accent-orange)">⟳</text>
+                </g>
+                }
+
+                <!-- Confidence bar -->
+                @if (node.step.confidence !== undefined && node.step.confidence !== null) {
+                <rect x="14" [attr.y]="node.height - 4" [attr.width]="(node.width - 42) * (node.step.confidence)"
+                    height="2" rx="1" [attr.fill]="getTypeColor(node.step.type)" opacity="0.4" />
+                <rect x="14" [attr.y]="node.height - 4" [attr.width]="node.width - 42" height="2" rx="1"
+                    fill="var(--bg-surface)" />
+                <rect x="14" [attr.y]="node.height - 4"
+                    [attr.width]="(node.width - 42) * (node.step.confidence)" height="2" rx="1"
+                    [attr.fill]="getTypeColor(node.step.type)" opacity="0.6" />
+                }
+            </g>
+            }
+        </svg>
+        } @else {
+        <div class="empty-state">
+            <lucide-icon [img]="branchIcon" [size]="32" color="var(--text-muted)" />
+            <span>Select a task flow to visualize</span>
+        </div>
+        }
+
+        <!-- Hover tooltip -->
+        @if (hoveredNode(); as hNode) {
+        <div class="node-tooltip">
+            <div class="tt-header">
+                <span class="tt-type" [style.color]="getTypeColor(hNode.step.type)">
+                    {{ getTypeLabel(hNode.step.type) }}
+                </span>
+                <span class="tt-step">#{{ hNode.step.stepNumber }}</span>
+            </div>
+            <div class="tt-reasoning">{{ hNode.step.reasoning }}</div>
+            @if (hNode.step.result) {
+            <div class="tt-result">
+                <span class="tt-result-label">Result:</span>
+                {{ truncateText(hNode.step.result, 120) }}
+            </div>
+            }
+            <div class="tt-meta">
+                <span>{{ formatDuration(hNode.step.duration) }}</span>
+                <span>{{ hNode.step.tokensUsed }} tokens</span>
+                @if (hNode.step.confidence !== undefined) {
+                <span>{{ (hNode.step.confidence * 100).toFixed(0) }}% confidence</span>
+                }
+            </div>
+        </div>
+        }
+    </div>
+</div>

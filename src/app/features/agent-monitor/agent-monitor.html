@@ -1,0 +1,20 @@
+<div class="agent-monitor">
+    <!-- Top Stats Bar -->
+    <app-execution-stats-bar [stats]="stats()"></app-execution-stats-bar>
+
+    <!-- Main Content -->
+    <div class="monitor-content">
+        <!-- Left: Execution Timeline (main panel, like Chrome DevTools Network tab) -->
+        <div class="timeline-section">
+            <app-execution-timeline [executions]="executions()" (executionSelect)="onExecutionSelect($event)">
+            </app-execution-timeline>
+        </div>
+
+        <!-- Right: Agent Queue -->
+        <aside class="queue-section">
+            <app-agent-queue-panel [executions]="executions()" (executionSelect)="onExecutionSelect($event)"
+                (executionAction)="onExecutionAction($event)">
+            </app-agent-queue-panel>
+        </aside>
+    </div>
+</div>

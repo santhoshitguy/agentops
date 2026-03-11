@@ -1,0 +1,29 @@
+<div class="layout-shell" [class.sidebar-open]="isMobileOpen()">
+    <!-- Backdrop: closes sidebar when tapping outside on mobile -->
+    <div class="sidebar-backdrop" (click)="closeMobileSidebar()"></div>
+
+    <!-- Sidebar -->
+    <app-sidebar
+        [collapsed]="!isSidebarExpanded"
+        (toggle)="toggleSidebar()"
+        (close)="closeMobileSidebar()">
+    </app-sidebar>
+
+    <!-- Main Content Wrapper -->
+    <div class="layout-main">
+        <!-- Header — openSearch bubbles up from the search trigger button -->
+        <app-header (toggleSidebar)="toggleMobileSidebar()" (openSearch)="openSearch()"></app-header>
+
+        <!-- Scrollable Content Area -->
+        <main class="layout-content">
+            <app-alert-banner></app-alert-banner>
+            <router-outlet></router-outlet>
+        </main>
+
+        <!-- Footer -->
+        <app-footer></app-footer>
+    </div>
+</div>
+
+<!-- Global Search Overlay (outside layout-shell to avoid stacking context issues) -->
+<app-global-search></app-global-search>

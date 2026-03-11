@@ -1,0 +1,46 @@
+<div class="replay-controls">
+    <!-- Progress bar -->
+    <div class="replay-progress" (click)="onProgressClick($event)">
+        <div class="progress-track">
+            <div class="progress-fill" [style.width.%]="progress()"></div>
+        </div>
+    </div>
+
+    <div class="controls-row">
+        <!-- Left: step info -->
+        <div class="step-info">
+            <span class="step-current">{{ currentStepSignal() }}</span>
+            <span class="step-separator">/</span>
+            <span class="step-total">{{ totalStepsSignal() }}</span>
+        </div>
+
+        <!-- Center: transport controls -->
+        <div class="transport">
+            <button class="ctrl-btn" (click)="goToStart()" title="Go to start">
+                <lucide-icon [img]="skipBackIcon" [size]="14" />
+            </button>
+            <button class="ctrl-btn" (click)="prevStep()" title="Previous step">
+                <lucide-icon [img]="prevIcon" [size]="14" />
+            </button>
+            <button class="ctrl-btn play-btn" (click)="togglePlay()" [title]="isPlaying() ? 'Pause' : 'Play'">
+                <lucide-icon [img]="isPlaying() ? pauseIcon : playIcon" [size]="16" />
+            </button>
+            <button class="ctrl-btn" (click)="nextStep()" title="Next step">
+                <lucide-icon [img]="nextIcon" [size]="14" />
+            </button>
+            <button class="ctrl-btn" (click)="goToEnd()" title="Go to end">
+                <lucide-icon [img]="skipForwardIcon" [size]="14" />
+            </button>
+        </div>
+
+        <!-- Right: speed + reset -->
+        <div class="controls-right">
+            <button class="speed-btn" (click)="cycleSpeed()" title="Playback speed">
+                {{ playSpeed() }}x
+            </button>
+            <button class="ctrl-btn" (click)="reset()" title="Reset">
+                <lucide-icon [img]="resetIcon" [size]="13" />
+            </button>
+        </div>
+    </div>
+</div>

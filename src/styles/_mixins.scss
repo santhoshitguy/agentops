@@ -1,0 +1,678 @@
+// ============================================
+// AgentOps Pro - SCSS Mixins & Utilities
+// Glowing Effects, Animations, Glassmorphism
+// ============================================
+
+@use 'sass:math';
+@use 'sass:map';
+
+// ==========================================
+// GLOW EFFECT MIXINS
+// ==========================================
+
+/// Creates a neon glow effect with customizable color and intensity
+/// Note: Uses box-shadow with the color directly - opacity is handled via color-mix
+/// @param {Color} $color - The glow color (supports CSS variables)
+/// @param {Number} $intensity - Glow intensity (1-5)
+/// @param {Boolean} $animated - Whether to animate the glow
+@mixin glow($color, $intensity: 2, $animated: false) {
+    $base-blur: 10px * $intensity;
+    $spread-blur: 20px * $intensity;
+    $far-blur: 40px * $intensity;
+
+    // Use color-mix for opacity with CSS variable support
+    box-shadow:
+        0 0 $base-blur color-mix(in srgb, $color 40%, transparent),
+        0 0 $spread-blur color-mix(in srgb, $color 30%, transparent),
+        0 0 $far-blur color-mix(in srgb, $color 15%, transparent);
+
+    @if $animated {
+        animation: glow-pulse 2s ease-in-out infinite;
+    }
+}
+
+/// Creates a simple glow effect for utility classes
+/// @param {Color} $color - The glow color (supports CSS variables)
+@mixin glow-effect($color) {
+    box-shadow:
+        0 0 20px color-mix(in srgb, $color 50%, transparent),
+        0 0 40px color-mix(in srgb, $color 25%, transparent);
+}
+
+/// Creates a text glow effect
+/// @param {Color} $color - The glow color
+/// @param {Number} $intensity - Glow intensity (1-5)
+@mixin text-glow($color, $intensity: 2) {
+    $base-blur: 5px * $intensity;
+    $spread-blur: 10px * $intensity;
+
+    text-shadow:
+        0 0 $base-blur $color,
+        0 0 $spread-blur color-mix(in srgb, $color 60%, transparent);
+}
+
+/// Creates an SVG filter glow effect
+/// @param {Color} $color - The glow color
+/// @param {Number} $blur - Blur radius
+@mixin svg-glow($color, $blur: 8) {
+    filter: drop-shadow(0 0 #{$blur}px $color) drop-shadow(0 0 #{$blur * 2}px color-mix(in srgb, $color 50%, transparent));
+}
+
+/// Creates a border glow effect
+/// @param {Color} $color - The glow color
+/// @param {Number} $width - Border width
+@mixin border-glow($color, $width: 1px) {
+    border: $width solid $color;
+    box-shadow:
+        0 0 10px color-mix(in srgb, $color 30%, transparent),
+        0 0 20px color-mix(in srgb, $color 20%, transparent),
+        inset 0 0 10px color-mix(in srgb, $color 10%, transparent);
+}
+
+
+// ==========================================
+// SVG NODE GLOW MIXINS
+// ==========================================
+
+/// Creates an SVG node container with layered glow
+/// @param {Color} $color - Node accent color
+@mixin node-glow-layers($color) {
+    .node-outer-ring {
+        fill: none;
+        stroke: $color;
+        stroke-width: 1;
+        stroke-opacity: 0.2;
+        transition: stroke-opacity 0.3s ease;
+    }
+
+    .node-pulse-ring {
+        fill: none;
+        stroke: $color;
+        stroke-width: 1.5;
+        stroke-opacity: 0;
+        animation: ring-pulse var(--pulse-ring-duration, 2.5s) ease-out infinite;
+    }
+
+    .node-main-circle {
+        stroke: $color;
+        stroke-width: 2;
+        fill: color-mix(in srgb, $color 12%, transparent);
+        transition: stroke-width 0.2s ease, fill 0.2s ease;
+    }
+
+    .node-inner-highlight {
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.08);
+        stroke-width: 1;
+    }
+
+    &:hover {
+        .node-outer-ring {
+            stroke-opacity: 0.5;
+        }
+        .node-main-circle {
+            stroke-width: 3;
+            fill: color-mix(in srgb, $color 18%, transparent);
+        }
+    }
+}
+
+/// Creates animated wave connection styling
+/// @param {Color} $color - Wave color
+@mixin wave-connection($color) {
+    .wave-base-line {
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.08);
+        stroke-width: var(--connection-width);
+        stroke-linecap: round;
+    }
+
+    .wave-glow-line {
+        fill: none;
+        stroke: $color;
+        stroke-width: var(--connection-width);
+        stroke-linecap: round;
+        stroke-dasharray: var(--wave-dash-length) var(--wave-dash-gap);
+        animation: dash-flow var(--wave-flow-speed) linear infinite;
+        filter: drop-shadow(0 0 var(--wave-glow-blur) color-mix(in srgb, $color 50%, transparent));
+    }
+
+    .wave-particle {
+        fill: $color;
+        filter: drop-shadow(0 0 4px $color);
+    }
+}
+
+/// Node status indicator ring animation
+/// @param {Color} $color - Status color
+@mixin node-status-ring($color) {
+    stroke: $color;
+    stroke-width: 2;
+    stroke-opacity: 0.4;
+    animation: ring-pulse 2s ease-out infinite;
+
+    @keyframes ring-pulse {
+        0% {
+            r: var(--pulse-ring-min-r, 35);
+            stroke-opacity: 0.4;
+        }
+        100% {
+            r: var(--pulse-ring-max-r, 48);
+            stroke-opacity: 0;
+        }
+    }
+}
+
+// ==========================================
+// GLASSMORPHISM MIXINS
+// ==========================================
+
+/// Creates a glassmorphism card effect
+/// @param {Number} $blur - Backdrop blur amount
+/// @param {Number} $opacity - Background opacity
+@mixin glass-card($blur: 12px, $opacity: 0.7) {
+    background: rgba(15, 15, 35, $opacity);
+    backdrop-filter: blur($blur);
+    -webkit-backdrop-filter: blur($blur);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-xl);
+}
+
+/// Creates a frosted glass effect with gradient
+/// @param {Color} $tint - Optional tint color (supports CSS variables)
+@mixin glass-frosted($tint: null) {
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.05) 0%,
+            rgba(255, 255, 255, 0.02) 100%);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    @if $tint {
+        background: linear-gradient(135deg,
+                color-mix(in srgb, $tint 8%, transparent) 0%,
+                color-mix(in srgb, $tint 2%, transparent) 100%);
+    }
+}
+
+/// Creates a glass panel with subtle gradient
+/// @param {Color} $bg - Background color (defaults to --glass-bg)
+/// @param {Number} $blur - Backdrop blur amount
+/// @param {Number} $opacity - Not used directly but kept for API compatibility
+@mixin glass-panel($bg: null, $blur: 20px, $opacity: null) {
+    @if $bg {
+        background: $bg;
+    }
+
+    @else {
+        background: var(--glass-bg);
+    }
+
+    backdrop-filter: blur($blur);
+    -webkit-backdrop-filter: blur($blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/// Creates an interactive glass panel with hover effects
+@mixin glass-panel-interactive() {
+    @include glass-panel();
+    transition: all var(--transition-fast) var(--ease-out);
+    cursor: pointer;
+
+    &:hover {
+        border-color: var(--glass-border-active);
+        transform: translateY(-2px);
+        box-shadow:
+            0 12px 40px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+}
+
+// ==========================================
+// ANIMATION KEYFRAMES
+// ==========================================
+
+/// Pulsing glow animation
+@keyframes glow-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        filter: brightness(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        filter: brightness(1.2);
+    }
+}
+
+/// Rotating gradient animation
+@keyframes gradient-rotate {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/// Floating animation
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/// Pulse scale animation
+@keyframes pulse-scale {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/// Ripple effect animation
+@keyframes ripple {
+    0% {
+        transform: scale(0.8);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(2.4);
+        opacity: 0;
+    }
+}
+
+/// Data stream animation (for terminal)
+@keyframes data-stream {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 0 100%;
+    }
+}
+
+/// Scan line animation
+@keyframes scan-line {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+/// Wave flow animation
+@keyframes wave-flow {
+    0% {
+        stroke-dashoffset: 0;
+    }
+
+    100% {
+        stroke-dashoffset: -100;
+    }
+}
+
+/// Particle float animation
+@keyframes particle-float {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.6;
+    }
+
+    25% {
+        transform: translate(10px, -20px) scale(1.1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translate(20px, -10px) scale(0.9);
+        opacity: 0.8;
+    }
+
+    75% {
+        transform: translate(5px, -25px) scale(1.05);
+        opacity: 0.7;
+    }
+}
+
+/// Status indicator pulse
+@keyframes status-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 currentColor;
+    }
+
+    50% {
+        box-shadow: 0 0 0 8px transparent;
+    }
+}
+
+/// Circle draw animation
+@keyframes circle-draw {
+    0% {
+        stroke-dashoffset: 283;
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+/// Glow breathe animation
+@keyframes glow-breathe {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 8px currentColor);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 16px currentColor) drop-shadow(0 0 32px currentColor);
+    }
+}
+
+// ==========================================
+// ANIMATION MIXINS
+// ==========================================
+
+/// Applies a smooth transition
+/// @param {String} $properties - Properties to transition
+/// @param {Number} $duration - Duration in ms
+/// @param {String} $easing - Easing function
+@mixin transition($properties: all, $duration: var(--transition-normal), $easing: var(--ease-out)) {
+    transition: $properties $duration $easing;
+}
+
+/// Applies a pulsing animation
+/// @param {Number} $duration - Animation duration
+@mixin animate-pulse($duration: 2s) {
+    animation: glow-pulse $duration ease-in-out infinite;
+}
+
+/// Applies a floating animation
+/// @param {Number} $duration - Animation duration
+/// @param {Number} $delay - Animation delay
+@mixin animate-float($duration: 3s, $delay: 0s) {
+    animation: float $duration ease-in-out infinite;
+    animation-delay: $delay;
+}
+
+/// Applies a ripple effect on click
+@mixin ripple-effect() {
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+        transform: translate(-50%, -50%) scale(0);
+        border-radius: 50%;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &:active::after {
+        animation: ripple 0.6s ease-out;
+    }
+}
+
+// ==========================================
+// UTILITY MIXINS
+// ==========================================
+
+/// Creates a gradient border effect
+/// @param {Gradient} $gradient - Border gradient
+/// @param {Number} $width - Border width
+@mixin gradient-border($gradient, $width: 1px) {
+    background:
+        linear-gradient(var(--bg-surface), var(--bg-surface)) padding-box,
+        $gradient border-box;
+    border: $width solid transparent;
+}
+
+/// Creates a shimmer loading effect
+@mixin shimmer() {
+    background: linear-gradient(90deg,
+            var(--bg-surface) 0%,
+            var(--bg-elevated) 50%,
+            var(--bg-surface) 100%);
+    background-size: 200% 100%;
+    animation: gradient-rotate 1.5s ease-in-out infinite;
+}
+
+/// Creates a noise texture overlay
+@mixin noise-overlay($opacity: 0.03) {
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        opacity: $opacity;
+        pointer-events: none;
+        mix-blend-mode: overlay;
+    }
+}
+
+/// Creates a scan line effect
+@mixin scan-lines($spacing: 4px, $opacity: 0.03) {
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(0deg,
+            transparent,
+            transparent $spacing,
+            rgba(0, 0, 0, $opacity) $spacing,
+            rgba(0, 0, 0, $opacity) #{$spacing * 2});
+        pointer-events: none;
+    }
+}
+
+/// Truncate text with ellipsis
+/// @param {Number} $lines - Number of lines before truncation
+@mixin truncate($lines: 1) {
+    @if $lines ==1 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    @else {
+        display: -webkit-box;
+        -webkit-line-clamp: $lines;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}
+
+/// Creates a scrollbar style
+@mixin custom-scrollbar($width: 6px, $track: var(--bg-deep), $thumb: var(--bg-overlay)) {
+    scrollbar-width: thin;
+    scrollbar-color: $thumb $track;
+
+    &::-webkit-scrollbar {
+        width: $width;
+        height: $width;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $track;
+        border-radius: var(--radius-full);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $thumb;
+        border-radius: var(--radius-full);
+
+        &:hover {
+            // Use color-mix for runtime CSS variable compatibility
+            background: color-mix(in srgb, $thumb 90%, white);
+        }
+    }
+}
+
+// ==========================================
+// RESPONSIVE MIXINS
+// ==========================================
+
+$breakpoints: (
+    'xs': 320px,
+    'sm': 640px,
+    'md': 768px,
+    'lg': 1024px,
+    'xl': 1280px,
+    '2xl': 1536px,
+);
+
+/// Media query for minimum width
+/// @param {String} $breakpoint - Breakpoint name
+@mixin min-width($breakpoint) {
+    @if map.has-key($breakpoints, $breakpoint) {
+        @media (min-width: map.get($breakpoints, $breakpoint)) {
+            @content;
+        }
+    }
+
+    @else {
+        @media (min-width: $breakpoint) {
+            @content;
+        }
+    }
+}
+
+/// Media query for maximum width
+/// @param {String} $breakpoint - Breakpoint name
+@mixin max-width($breakpoint) {
+    @if map.has-key($breakpoints, $breakpoint) {
+        @media (max-width: #{map.get($breakpoints, $breakpoint) - 1px}) {
+            @content;
+        }
+    }
+
+    @else {
+        @media (max-width: $breakpoint) {
+            @content;
+        }
+    }
+}
+
+// ==========================================
+// COMPONENT PRESET MIXINS
+// ==========================================
+
+/// Card component preset
+@mixin card-preset() {
+    @include glass-panel();
+    padding: var(--space-6);
+    @include transition(transform, var(--transition-fast));
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+}
+
+/// Button preset with glow
+/// @param {Color} $color - Button accent color
+@mixin button-glow($color) {
+    // Use color-mix for runtime CSS variable compatibility
+    background: linear-gradient(135deg, $color, color-mix(in srgb, $color 85%, black));
+    color: var(--text-primary);
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: var(--space-3) var(--space-6);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    @include transition(all, var(--transition-fast));
+
+    &:hover {
+        @include glow($color, 2);
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+/// Input field preset
+@mixin input-preset() {
+    background: var(--bg-deep);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3) var(--space-4);
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    @include transition(all, var(--transition-fast));
+
+    &::placeholder {
+        color: var(--text-muted);
+    }
+
+    &:focus {
+        outline: none;
+        border-color: var(--accent-primary);
+        @include glow(var(--accent-primary), 1);
+    }
+}
+
+/// Badge preset
+/// @param {Color} $color - Badge color (supports CSS variables)
+@mixin badge-preset($color) {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-3);
+    background: color-mix(in srgb, $color 15%, transparent);
+    color: $color;
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+}
+
+/// Status dot indicator
+/// @param {Color} $color - Status color
+/// @param {Boolean} $animated - Whether to animate
+@mixin status-dot($color, $animated: true) {
+    width: 8px;
+    height: 8px;
+    background: $color;
+    border-radius: var(--radius-full);
+    @include glow($color, 1);
+
+    @if $animated {
+        animation: status-pulse 2s ease-in-out infinite;
+    }
+}

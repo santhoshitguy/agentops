@@ -1,0 +1,86 @@
+<div class="message-timeline">
+    @if (messages().length === 0) {
+    <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <p>No messages in the timeline</p>
+    </div>
+    } @else {
+    <div class="timeline-container custom-scrollbar">
+        @for (message of messages(); track message.messageId) {
+        <div class="timeline-item" [class.failed]="message.status === 'failed'">
+            <!-- Timeline dot and line -->
+            <div class="timeline-marker">
+                <div class="marker-dot" [style.background]="getMessageColor(message.messageType)"></div>
+                <div class="marker-line"></div>
+            </div>
+
+            <!-- Message content -->
+            <div class="message-card">
+                <!-- Header -->
+                <div class="message-header">
+                    <div class="message-flow">
+                        <span class="agent-badge from">{{ message.fromAgentName }}</span>
+                        <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                        <span class="agent-badge to">{{ message.toAgentName }}</span>
+                    </div>
+
+                    <div class="message-meta">
+                        <span class="message-icon">{{ getMessageIcon(message.messageType) }}</span>
+                        <span class="message-type">{{ message.messageType.replace('_', ' ') }}</span>
+                        <span class="message-time">{{ getRelativeTime(message.timestamp) }}</span>
+                    </div>
+                </div>
+
+                <!-- Payload -->
+                <div class="message-payload">
+                    {{ message.payload }}
+                </div>
+
+                <!-- Footer -->
+                <div class="message-footer">
+                    <div class="message-stats">
+                        <span class="stat">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            {{ message.latency }}ms
+                        </span>
+                        <span class="stat">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                            </svg>
+                            {{ formatBytes(message.payloadSize) }}
+                        </span>
+                        <span class="stat protocol">{{ message.protocol }}</span>
+                    </div>
+
+                    <div class="message-badges">
+                        @if (message.priority === 'high' || message.priority === 'urgent') {
+                        <span class="priority-badge" [style.border-color]="getPriorityColor(message.priority)">
+                            {{ message.priority }}
+                        </span>
+                        }
+                        @if (message.retryCount > 0) {
+                        <span class="retry-badge">{{ message.retryCount }} retries</span>
+                        }
+                        @if (message.status === 'failed') {
+                        <span class="status-badge failed">Failed</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</div>

@@ -1,0 +1,760 @@
+/* You can add global styles to this file, and also import other style files */
+
+// ============================================
+// AgentOps Lite - Global Styles
+// Main Entry Point with Tailwind CSS Integration
+// ============================================
+// Import design system (CSS variables)
+@use 'styles/tokens';
+@use 'styles/mixins' as *;
+@use 'styles/animations';
+
+@import "tailwindcss";
+
+// ==========================================
+// TAILWIND v4 THEME CONFIGURATION
+// ==========================================
+@theme {
+    // Font families
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Rajdhani', 'Inter', sans-serif;
+    --font-mono: 'Fira Code', 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+
+    // Background colors
+    --color-bg-void: #000000;
+    --color-bg-space: #020408;
+    --color-bg-deep: #040810;
+    --color-bg-primary: #060c16;
+    --color-bg-secondary: #081018;
+    --color-bg-tertiary: #0a141e;
+    --color-bg-elevated: #0c1824;
+    --color-bg-surface: #0e1c2a;
+    --color-bg-overlay: #101f30;
+    --color-bg-card: #0a1420;
+    --color-bg-panel: #081014;
+
+    // Accent colors
+    --color-cyan: #00e5ff;
+    --color-neon-green: #00e676;
+    --color-neon-purple: #b388ff;
+    --color-neon-pink: #ff4081;
+    --color-neon-orange: #ff9100;
+    --color-neon-red: #ff5252;
+    --color-neon-yellow: #ffea00;
+
+    // Gray colors
+    --color-gray-400: #9ca3af;
+    --color-gray-500: #6b7280;
+    --color-gray-600: #4b5563;
+
+    // Text colors (mapped from tokens)
+    --color-text-primary: var(--text-primary);
+    --color-text-secondary: var(--text-secondary);
+    --color-text-tertiary: var(--text-tertiary);
+
+    // Border colors (mapped from tokens)
+    --color-border: var(--border-primary);
+
+    // Spacing tokens (mapped from space-* tokens)
+    --spacing-xs: var(--space-2); // 8px
+    --spacing-sm: var(--space-3); // 12px
+    --spacing-md: var(--space-4); // 16px
+    --spacing-lg: var(--space-6); // 24px
+    --spacing-xl: var(--space-8); // 32px
+    --spacing-2xl: var(--space-10); // 40px
+
+    // Radius tokens (mapped from existing)
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-xl: var(--radius-xl);
+
+    // Font sizes (mapped from text-*)
+    --font-size-xs: var(--text-xs);
+    --font-size-sm: var(--text-sm);
+    --font-size-base: var(--text-base);
+    --font-size-lg: var(--text-lg);
+    --font-size-xl: var(--text-xl);
+    --font-size-2xl: var(--text-2xl);
+
+    // Font families (mapped)
+    --font-body: var(--font-sans);
+}
+
+// ==========================================
+// FONT IMPORTS
+// ==========================================
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap');
+
+// ==========================================
+// TAILWIND BASE LAYER CUSTOMIZATIONS
+// ==========================================
+
+@layer base {
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html {
+        font-size: 16px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        overflow-x: hidden;
+    }
+
+    body {
+        @apply font-sans text-base leading-normal;
+        color: var(--text-primary);
+        background: var(--bg-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+
+        // Mesh gradient background
+        &::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: var(--gradient-bg-mesh);
+            pointer-events: none;
+            z-index: var(--z-deep);
+        }
+    }
+
+    // Typography
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-display font-semibold leading-tight;
+        color: var(--text-primary);
+    }
+
+    h1 {
+        @apply text-4xl;
+    }
+
+    h2 {
+        @apply text-3xl;
+    }
+
+    h3 {
+        @apply text-2xl;
+    }
+
+    h4 {
+        @apply text-xl;
+    }
+
+    h5 {
+        @apply text-lg;
+    }
+
+    h6 {
+        @apply text-base;
+    }
+
+    // Links
+    a {
+        color: var(--accent-primary);
+        text-decoration: none;
+        @apply transition-colors duration-150;
+
+        &:hover {
+            color: var(--accent-primary-bright);
+        }
+    }
+
+    // Selection
+    ::selection {
+        background: var(--accent-primary-subtle);
+        color: var(--text-primary);
+    }
+
+    // Focus styles
+    :focus-visible {
+        @apply outline-2 outline-cyan outline-offset-2;
+    }
+
+    // Scrollbar styles
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--bg-deep);
+        border-radius: 9999px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--bg-overlay);
+        border-radius: 9999px;
+
+        &:hover {
+            background: var(--bg-surface);
+        }
+    }
+
+    // Host element display (Angular)
+    :host {
+        display: block;
+    }
+}
+
+// ==========================================
+// TAILWIND COMPONENTS LAYER
+// ==========================================
+
+@layer components {
+
+    // Text utilities with CSS variables
+    .text-gradient {
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .text-glow-cyan {
+        @include text-glow(var(--accent-primary), 2);
+    }
+
+    .text-glow-purple {
+        @include text-glow(var(--accent-secondary), 2);
+    }
+
+    .text-glow-green {
+        @include text-glow(var(--accent-success), 2);
+    }
+
+    .text-mono {
+        font-family: var(--font-mono);
+    }
+
+    // Button styles using SCSS mixins + Tailwind
+    .btn {
+        @apply inline-flex items-center justify-center gap-2;
+        @apply px-6 py-3 text-sm font-medium leading-none;
+        @apply rounded-lg border-none cursor-pointer;
+        @apply transition-all duration-150;
+
+        &:disabled {
+            @apply opacity-50 cursor-not-allowed;
+        }
+    }
+
+    .btn-primary {
+        @extend .btn;
+        @include button-glow(var(--accent-primary));
+    }
+
+    .btn-secondary {
+        @extend .btn;
+        @apply bg-bg-surface text-white;
+        border: 1px solid var(--border-secondary);
+
+        &:hover {
+            @apply bg-bg-elevated;
+            border-color: var(--accent-primary);
+        }
+    }
+
+    .btn-ghost {
+        @extend .btn;
+        @apply bg-transparent text-gray-400;
+
+        &:hover {
+            @apply bg-bg-surface text-white;
+        }
+    }
+
+    .btn-icon {
+        @extend .btn;
+        @apply p-2 bg-transparent text-gray-500;
+
+        &:hover {
+            @apply bg-bg-surface text-cyan;
+        }
+    }
+
+    // Form elements
+    .input-field {
+        @include input-preset();
+        @apply w-full;
+    }
+
+    textarea.input-field {
+        @apply resize-y min-h-[100px];
+    }
+
+    select.input-field {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        @apply pr-10;
+    }
+
+    .form-label {
+        @apply block text-sm font-medium text-gray-400 mb-2;
+    }
+
+    // Card styles
+    .card {
+        @include glass-panel();
+        @apply p-6;
+    }
+
+    .card-header {
+        @apply flex items-center justify-between mb-4;
+    }
+
+    .card-title {
+        @apply font-display text-lg font-semibold text-white;
+    }
+
+    .card-subtitle {
+        @apply text-sm text-gray-500 mt-1;
+    }
+
+    // Badge styles
+    .badge {
+        @apply inline-flex items-center gap-1;
+        @apply px-3 py-1 text-xs font-medium rounded-full;
+    }
+
+    .badge-primary {
+        @extend .badge;
+        @include badge-preset(var(--accent-primary));
+    }
+
+    .badge-success {
+        @extend .badge;
+        @include badge-preset(var(--accent-success));
+    }
+
+    .badge-warning {
+        @extend .badge;
+        @include badge-preset(var(--accent-warning));
+    }
+
+    .badge-error {
+        @extend .badge;
+        @include badge-preset(var(--accent-error));
+    }
+
+    .badge-purple {
+        @extend .badge;
+        @include badge-preset(var(--accent-secondary));
+    }
+
+    // Status indicators
+    .status-dot {
+        @apply w-2 h-2 rounded-full;
+        animation: status-pulse 2s ease-in-out infinite;
+    }
+
+    .status-active {
+        @extend .status-dot;
+        background: var(--status-active);
+        box-shadow: 0 0 8px var(--accent-success-glow);
+    }
+
+    .status-idle {
+        @extend .status-dot;
+        background: var(--status-idle);
+        box-shadow: 0 0 8px var(--accent-warning-glow);
+    }
+
+    .status-error {
+        @extend .status-dot;
+        background: var(--status-error);
+        box-shadow: 0 0 8px var(--accent-error-glow);
+    }
+
+    .status-processing {
+        @extend .status-dot;
+        background: var(--status-processing);
+        box-shadow: 0 0 8px var(--accent-primary-glow);
+        animation: glow-pulse 1s ease-in-out infinite;
+    }
+
+    // Layout utilities
+    .app-layout {
+        @apply grid min-h-screen;
+        grid-template-columns: var(--sidebar-width) 1fr;
+
+        @include max-width('lg') {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .main-content {
+        @apply p-6 overflow-y-auto;
+        @include custom-scrollbar();
+    }
+
+    .grid-dashboard {
+        @apply grid gap-4;
+        grid-template-columns: repeat(3, 1fr);
+
+        @include max-width('xl') {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @include max-width('md') {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    // Glass morphism panels
+    .glass-panel {
+        @include glass-panel();
+    }
+
+    .glass-panel-light {
+        @include glass-panel(var(--bg-elevated), 16px, 0.1);
+    }
+
+    .glass-panel-hover {
+        @include glass-panel-interactive();
+    }
+
+    // Neon glow effects
+    .glow-cyan {
+        @include glow-effect(var(--accent-primary));
+    }
+
+    .glow-green {
+        @include glow-effect(var(--accent-success));
+    }
+
+    .glow-purple {
+        @include glow-effect(var(--accent-secondary));
+    }
+
+    .glow-pink {
+        @include glow-effect(var(--neon-pink));
+    }
+
+    .glow-orange {
+        @include glow-effect(var(--neon-orange));
+    }
+}
+
+// ==========================================
+// TAILWIND UTILITIES LAYER
+// ==========================================
+
+@layer utilities {
+
+    // Flex utilities
+    .flex-center {
+        @apply flex items-center justify-center;
+    }
+
+    .flex-between {
+        @apply flex items-center justify-between;
+    }
+
+    .flex-start {
+        @apply flex items-center justify-start;
+    }
+
+    .flex-end {
+        @apply flex items-center justify-end;
+    }
+
+    // Text truncation
+    .truncate-1 {
+        @include truncate(1);
+    }
+
+    .truncate-2 {
+        @include truncate(2);
+    }
+
+    .truncate-3 {
+        @include truncate(3);
+    }
+
+    // Screen reader only
+    .sr-only {
+        @apply absolute w-px h-px p-0 -m-px overflow-hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    // Node color utilities
+    .node-cyan {
+        --node-color: var(--node-cyan);
+        --node-glow: var(--node-cyan-glow);
+    }
+
+    .node-green {
+        --node-color: var(--node-green);
+        --node-glow: var(--node-green-glow);
+    }
+
+    .node-purple {
+        --node-color: var(--node-purple);
+        --node-glow: var(--node-purple-glow);
+    }
+
+    .node-pink {
+        --node-color: var(--node-pink);
+        --node-glow: var(--node-pink-glow);
+    }
+
+    .node-orange {
+        --node-color: var(--node-orange);
+        --node-glow: var(--node-orange-glow);
+    }
+
+    .node-lightblue {
+        --node-color: var(--node-lightblue);
+        --node-glow: var(--node-lightblue-glow);
+    }
+
+    // Terminal colors
+    .terminal-timestamp {
+        color: var(--terminal-timestamp);
+    }
+
+    .terminal-function {
+        color: var(--terminal-function);
+    }
+
+    .terminal-string {
+        color: var(--terminal-string);
+    }
+
+    .terminal-number {
+        color: var(--terminal-number);
+    }
+
+    .terminal-keyword {
+        color: var(--terminal-keyword);
+    }
+
+    .terminal-comment {
+        color: var(--terminal-comment);
+    }
+
+    .terminal-success {
+        color: var(--terminal-success);
+    }
+
+    .terminal-error {
+        color: var(--terminal-error);
+    }
+
+    .terminal-warning {
+        color: var(--terminal-warning);
+    }
+
+    // Touch-friendly minimum tap target
+    .touch-target {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    // Animation delay utilities
+    .animation-delay-100 {
+        animation-delay: 100ms;
+    }
+
+    .animation-delay-200 {
+        animation-delay: 200ms;
+    }
+
+    .animation-delay-300 {
+        animation-delay: 300ms;
+    }
+
+    .animation-delay-400 {
+        animation-delay: 400ms;
+    }
+
+    .animation-delay-500 {
+        animation-delay: 500ms;
+    }
+
+    .animation-delay-700 {
+        animation-delay: 700ms;
+    }
+
+    .animation-delay-1000 {
+        animation-delay: 1000ms;
+    }
+
+    // Backdrop blur utilities
+    .backdrop-blur-xs {
+        backdrop-filter: blur(2px);
+    }
+
+    .backdrop-blur-sm {
+        backdrop-filter: blur(4px);
+    }
+
+    .backdrop-blur-md {
+        backdrop-filter: blur(8px);
+    }
+
+    .backdrop-blur-lg {
+        backdrop-filter: blur(12px);
+    }
+
+    .backdrop-blur-xl {
+        backdrop-filter: blur(16px);
+    }
+
+    .backdrop-blur-2xl {
+        backdrop-filter: blur(20px);
+    }
+
+    .backdrop-blur-3xl {
+        backdrop-filter: blur(24px);
+    }
+
+    // Gradient backgrounds
+    .bg-gradient-mesh {
+        background: var(--gradient-bg-mesh);
+    }
+
+    .bg-gradient-radial-cyan {
+        background: radial-gradient(circle, rgba(0, 229, 255, 0.5) 0%, transparent 70%);
+    }
+
+    .bg-gradient-radial-purple {
+        background: radial-gradient(circle, rgba(179, 136, 255, 0.5) 0%, transparent 70%);
+    }
+
+    .bg-gradient-radial-green {
+        background: radial-gradient(circle, rgba(0, 230, 118, 0.5) 0%, transparent 70%);
+    }
+}
+
+// ==========================================
+// ANGULAR SPECIFIC
+// ==========================================
+
+// Router outlet animations
+router-outlet+* {
+    animation: card-reveal 0.3s ease-out;
+}
+
+// ==========================================
+// LEGACY SPACING UTILITIES (for compatibility)
+// ==========================================
+
+@each $size in (0, 1, 2, 3, 4, 5, 6, 8, 10, 12) {
+    .mt-#{$size} {
+        margin-top: var(--space-#{$size});
+    }
+
+    .mb-#{$size} {
+        margin-bottom: var(--space-#{$size});
+    }
+
+    .ml-#{$size} {
+        margin-left: var(--space-#{$size});
+    }
+
+    .mr-#{$size} {
+        margin-right: var(--space-#{$size});
+    }
+
+    .mx-#{$size} {
+        margin-left: var(--space-#{$size});
+        margin-right: var(--space-#{$size});
+    }
+
+    .my-#{$size} {
+        margin-top: var(--space-#{$size});
+        margin-bottom: var(--space-#{$size});
+    }
+
+    .pt-#{$size} {
+        padding-top: var(--space-#{$size});
+    }
+
+    .pb-#{$size} {
+        padding-bottom: var(--space-#{$size});
+    }
+
+    .pl-#{$size} {
+        padding-left: var(--space-#{$size});
+    }
+
+    .pr-#{$size} {
+        padding-right: var(--space-#{$size});
+    }
+
+    .px-#{$size} {
+        padding-left: var(--space-#{$size});
+        padding-right: var(--space-#{$size});
+    }
+
+    .py-#{$size} {
+        padding-top: var(--space-#{$size});
+        padding-bottom: var(--space-#{$size});
+    }
+
+    .gap-#{$size} {
+        gap: var(--space-#{$size});
+    }
+}
+
+@layer components {
+    .spotlight-card {
+        position: relative;
+        overflow: hidden;
+        background: var(--color-ai-card);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* The actual spotlight layer */
+    .spotlight-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y),
+                rgba(0, 242, 255, 0.08),
+                transparent 40%);
+    }
+}
+
+/* Click Ripple Animation */
+@keyframes ripple-out {
+    from {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.ripple-dot {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--color-neon-cyan);
+    pointer-events: none;
+    z-index: 10;
+    animation: ripple-out 0.6s ease-out forwards;
+}

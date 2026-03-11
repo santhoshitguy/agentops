@@ -1,0 +1,142 @@
+:host {
+    display: block;
+}
+
+.replay-controls {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2) var(--space-3);
+}
+
+// ---- Progress Bar ----
+.replay-progress {
+    cursor: pointer;
+    padding: var(--space-1) 0;
+    margin-bottom: var(--space-1-5);
+}
+
+.progress-track {
+    height: 4px;
+    background: var(--bg-surface);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--accent-cyan);
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translate(50%, -50%);
+        width: 10px;
+        height: 10px;
+        background: var(--accent-cyan);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--accent-cyan);
+    }
+}
+
+// ---- Controls Row ----
+.controls-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+// ---- Step Info ----
+.step-info {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    min-width: 60px;
+}
+
+.step-current {
+    font-weight: var(--font-bold);
+    color: var(--accent-cyan);
+}
+
+.step-separator {
+    color: var(--text-disabled);
+}
+
+.step-total {
+    color: var(--text-muted);
+}
+
+// ---- Transport ----
+.transport {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.ctrl-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+        background: var(--bg-surface);
+        border-color: var(--glass-border-light);
+        color: var(--text-primary);
+    }
+
+    &.play-btn {
+        width: 36px;
+        height: 36px;
+        border-color: var(--accent-cyan);
+        color: var(--accent-cyan);
+        border-radius: 50%;
+
+        &:hover {
+            background: color-mix(in srgb, var(--accent-cyan) 12%, transparent);
+            box-shadow: 0 0 12px color-mix(in srgb, var(--accent-cyan) 30%, transparent);
+        }
+    }
+}
+
+// ---- Right Controls ----
+.controls-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-width: 60px;
+    justify-content: flex-end;
+}
+
+.speed-btn {
+    padding: 2px 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-family: var(--font-mono);
+    font-weight: var(--font-bold);
+    color: var(--accent-purple);
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+        border-color: var(--accent-purple);
+        background: color-mix(in srgb, var(--accent-purple) 10%, transparent);
+    }
+}

@@ -1,0 +1,137 @@
+<div class="metrics-panel">
+    <!-- Panel Header -->
+    <div class="panel-header">
+        <span class="panel-title">Essential & Resource Gauges</span>
+        <span class="header-subtitle">context/tokens: {{ contextUsed() | number }}/{{ contextTotal() }}</span>
+    </div>
+
+    <!-- Main Token Gauge -->
+    <div class="gauge-section">
+        <div class="gauge-container">
+            <svg viewBox="0 0 200 200" class="gauge-svg">
+                <defs>
+                    <linearGradient id="gauge-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#00e676" />
+                        <stop offset="50%" stop-color="#00e5ff" />
+                        <stop offset="100%" stop-color="#b388ff" />
+                    </linearGradient>
+                    <filter id="gauge-glow">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feFlood flood-color="#00e5ff" flood-opacity="0.5" />
+                        <feComposite in2="blur" operator="in" />
+                        <feMerge>
+                            <feMergeNode />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <!-- Track -->
+                <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="12"
+                    stroke-linecap="round" />
+
+                <!-- Progress arc -->
+                <circle cx="100" cy="100" r="85" fill="none" stroke="url(#gauge-gradient)" stroke-width="12"
+                    stroke-linecap="round" [attr.stroke-dasharray]="circumference()"
+                    [attr.stroke-dashoffset]="dashOffset()" transform="rotate(-90 100 100)" filter="url(#gauge-glow)"
+                    class="gauge-progress" />
+
+                <!-- Tick marks -->
+                @for (tick of ticks(); track tick) {
+                <line [attr.x1]="tickStart(tick).x" [attr.y1]="tickStart(tick).y" [attr.x2]="tickEnd(tick).x"
+                    [attr.y2]="tickEnd(tick).y" stroke="rgba(255,255,255,0.2)" stroke-width="1" />
+                }
+
+                <!-- Center content -->
+                <text x="100" y="90" text-anchor="middle" class="gauge-value">
+                    {{ formattedTokens() }}
+                </text>
+                <text x="100" y="115" text-anchor="middle" class="gauge-label">
+                    Tokens/sec
+                </text>
+            </svg>
+
+            <!-- Token counter -->
+            <div class="token-counter">
+                <span class="counter-label">MAX</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Token Burn Rate -->
+    <div class="metric-row">
+        <div class="metric-header">
+            <span class="metric-label">Token Burn Rate</span>
+            <button class="dropdown-btn">
+                <svg width="12" height="12" viewBox="0 0 24 24">
+                    <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Cost Section -->
+    <div class="cost-section">
+        <div class="cost-row">
+            <span class="cost-label">Cost Total</span>
+            <span class="cost-value">\${{ costTotal().toFixed(2) }}</span>
+        </div>
+        <div class="cost-row">
+            <span class="cost-label">BUDGET</span>
+            <div class="budget-toggle">
+                <span class="budget-value">ALL MODELS</span>
+                <label class="toggle">
+                    <input type="checkbox" [checked]="budgetEnabled()" (change)="toggleBudget()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model List -->
+    <div class="models-section">
+        <div class="section-header">
+            <span class="section-title">Models in Use</span>
+        </div>
+        <div class="models-list">
+            @for (model of models(); track model.id) {
+            <div class="model-item" [class.active]="model.enabled">
+                <div class="model-color" [style.background]="model.color"></div>
+                <span class="model-name">{{ model.name }}</span>
+                <label class="toggle small">
+                    <input type="checkbox" [checked]="model.enabled" (change)="toggleModel(model.id)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            }
+        </div>
+    </div>
+
+    <!-- System Info -->
+    <div class="system-info">
+        <div class="info-row">
+            <span class="info-label">Resources for experiment</span>
+        </div>
+        <div class="info-item">
+            <span class="dot active"></span>
+            <span class="info-text">ACTIVATED</span>
+        </div>
+        <div class="info-detail">
+            <span class="detail-label">AGENT CHAINS</span>
+        </div>
+        <div class="info-description">
+            Event inference for chains and dynamic spawn
+            events between models.
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <button class="action-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24">
+                <path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="2" fill="none" />
+            </svg>
+            <span>Enable advanced prompt tracing</span>
+        </button>
+    </div>
+</div>

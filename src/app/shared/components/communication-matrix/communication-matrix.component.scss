@@ -1,0 +1,20 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.communication-matrix {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-gray-500);
+    font-size: 14px;
+}

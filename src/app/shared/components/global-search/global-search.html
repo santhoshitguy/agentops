@@ -1,0 +1,150 @@
+@if (isOpen()) {
+  <!-- Full-screen backdrop -->
+  <div class="search-backdrop" (click)="onBackdropClick($event)" role="dialog" aria-label="Global search" aria-modal="true">
+
+    <!-- Search modal -->
+    <div class="search-modal">
+
+      <!-- ── Search input row ── -->
+      <div class="search-header">
+        <lucide-icon [img]="searchIcon" [size]="18" color="var(--text-muted)" class="search-icon" />
+        <input
+          #searchInput
+          type="text"
+          class="search-input"
+          placeholder="Search pages, agents, alerts..."
+          [value]="query()"
+          (input)="onQueryChange($event)"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Global search input"
+        />
+        @if (query()) {
+          <button class="search-clear" (click)="clearQuery()" aria-label="Clear search">
+            <lucide-icon [img]="xIcon" [size]="15" color="var(--text-muted)" />
+          </button>
+        }
+        <kbd class="search-esc-hint">ESC</kbd>
+      </div>
+
+      <div class="search-divider"></div>
+
+      <!-- ── Results body ── -->
+      <div class="search-body">
+
+        @if (hasResults()) {
+          <!-- Grouped results -->
+          @for (group of mapEntries(groupedResults()); track group.key) {
+            <div class="search-group">
+              <div class="group-label">{{ getCategoryLabel(group.key) }}</div>
+
+              @for (result of group.value; track result.id; let i = $index) {
+                <button
+                  class="search-result"
+                  [class.result-selected]="isItemSelected(group.key, i)"
+                  (click)="selectResult(result)"
+                  type="button"
+                >
+                  <!-- Icon badge -->
+                  <div class="result-icon-badge" [attr.data-cat]="result.category">
+                    @switch (result.category) {
+                      @case ('page') {
+                        <lucide-icon [img]="layoutIcon" [size]="14" color="var(--accent-primary)" />
+                      }
+                      @case ('agent') {
+                        <lucide-icon [img]="botIcon" [size]="14" color="var(--accent-secondary)" />
+                      }
+                      @case ('alert') {
+                        <lucide-icon [img]="bellIcon" [size]="14" color="var(--accent-warning)" />
+                      }
+                      @case ('session') {
+                        <lucide-icon [img]="playIcon" [size]="14" color="var(--accent-success)" />
+                      }
+                    }
+                  </div>
+
+                  <!-- Title + subtitle -->
+                  <div class="result-text">
+                    <span class="result-title" [innerHTML]="highlight(result.title)"></span>
+                    <span class="result-subtitle">{{ result.subtitle }}</span>
+                  </div>
+
+                  <!-- Optional badge (status/type) -->
+                  @if (result.badge) {
+                    <span class="result-badge" [style.color]="result.badgeColor" [style.border-color]="result.badgeColor">
+                      {{ result.badge }}
+                    </span>
+                  }
+
+                  <!-- Selected arrow -->
+                  @if (isItemSelected(group.key, i)) {
+                    <lucide-icon [img]="chevronIcon" [size]="14" color="var(--accent-primary)" class="result-arrow" />
+                  }
+                </button>
+              }
+            </div>
+          }
+
+        } @else if (showRecent()) {
+          <!-- Recent searches (shown when input is empty) -->
+          <div class="search-group">
+            <div class="group-label">Recent Searches</div>
+            @for (recent of recentSearches(); track recent.query) {
+              <button class="search-result" type="button" (click)="onRecentClick(recent.query)">
+                <div class="result-icon-badge result-icon-recent">
+                  <lucide-icon [img]="clockIcon" [size]="14" color="var(--text-muted)" />
+                </div>
+                <div class="result-text">
+                  <span class="result-title">{{ recent.query }}</span>
+                </div>
+              </button>
+            }
+          </div>
+
+        } @else if (query()) {
+          <!-- Empty state — no matches -->
+          <div class="search-empty">
+            <div class="empty-icon">
+              <lucide-icon [img]="searchIcon" [size]="32" color="var(--border-primary)" />
+            </div>
+            <p class="empty-title">No results for "<strong>{{ query() }}</strong>"</p>
+            <p class="empty-hint">Try searching for pages, agents, alerts or sessions</p>
+          </div>
+
+        } @else {
+          <!-- Idle state — no query, no recents -->
+          <div class="search-empty search-idle">
+            <div class="empty-icon">
+              <lucide-icon [img]="hashIcon" [size]="32" color="var(--border-primary)" />
+            </div>
+            <p class="empty-title">Search AgentOps</p>
+            <p class="empty-hint">Pages, agents, alerts, sessions and more</p>
+          </div>
+        }
+
+      </div>
+
+      <!-- ── Footer keyboard hints ── -->
+      <div class="search-footer">
+        <div class="footer-hints">
+          <span class="footer-hint">
+            <kbd>↑</kbd><kbd>↓</kbd>
+            <span>Navigate</span>
+          </span>
+          <span class="footer-hint">
+            <kbd>↵</kbd>
+            <span>Open</span>
+          </span>
+          <span class="footer-hint">
+            <kbd>ESC</kbd>
+            <span>Close</span>
+          </span>
+        </div>
+        <div class="footer-brand">
+          <span>AgentOps Search</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+}

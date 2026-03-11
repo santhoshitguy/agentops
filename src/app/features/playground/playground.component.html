@@ -1,0 +1,512 @@
+<div class="playground-container">
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- Header                                                          -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="playground-header">
+        <div class="header-left">
+            <h1 class="title">
+                LLM <span class="text-cyan">Playground</span>
+            </h1>
+            <p class="subtitle">Multi-model prompt testing with real-time SSE streaming</p>
+        </div>
+
+        <div class="header-right">
+            @if (activeMainTab() === 'llm-comparison') {
+            <!-- Cost Estimate -->
+            <div class="cost-panel">
+                <div class="cost-label">Estimated Cost</div>
+                <div class="cost-value">{{ formatCost(costEstimate().totalCost) }}</div>
+                <div class="cost-range">
+                    {{ formatCost(costEstimate().minCost) }} – {{ formatCost(costEstimate().maxCost) }}
+                </div>
+            </div>
+
+            @if (!isExecuting()) {
+            <button class="btn-execute"
+                [disabled]="session().selectedModels.length === 0 || session().prompt.length === 0"
+                (click)="runComparison()">
+                <span class="btn-icon">▶</span>
+                Run Comparison
+            </button>
+            } @else {
+            <button class="btn-cancel" (click)="cancelExecution()">
+                <span class="btn-icon">■</span>
+                Stop
+            </button>
+            }
+            }
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- Top-level tab switcher                                          -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="main-tabs">
+        <button class="main-tab" [class.active]="activeMainTab() === 'llm-comparison'"
+            (click)="selectMainTab('llm-comparison')">
+            <span class="tab-icon">⚡</span>
+            LLM Comparison
+        </button>
+        <button class="main-tab" [class.active]="activeMainTab() === 'agent-executor'"
+            (click)="selectMainTab('agent-executor')">
+            <span class="tab-icon">🤖</span>
+            Agent Executor
+        </button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- TAB 1: LLM Comparison                                           -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    @if (activeMainTab() === 'llm-comparison') {
+    <div class="playground-content">
+
+        <!-- Left Panel: Parameters + Prompt -->
+        <div class="left-panel">
+
+            <!-- Model Selection -->
+            <div class="section model-selector">
+                <div class="section-header">
+                    <h3>Select Models</h3>
+                    <span class="model-count">{{ session().selectedModels.length }}/{{ modelIds.length }}</span>
+                </div>
+
+                <div class="model-grid">
+                    @for (modelId of modelIds; track modelId) {
+                    <div class="model-card" [class.selected]="isModelSelected(modelId)"
+                        (click)="toggleModel(modelId)">
+                        <div class="model-header">
+                            <div class="model-dot"
+                                [style.background-color]="getModelConfig(modelId).color">
+                            </div>
+                            <span class="model-name">{{ getModelConfig(modelId).name }}</span>
+                        </div>
+                        <div class="model-info">
+                            <span class="model-provider">{{ getModelConfig(modelId).provider }}</span>
+                            <span class="model-cost">
+                                ${{ getModelConfig(modelId).inputCostPer1kTokens.toFixed(4) }}/1K
+                            </span>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Parameters -->
+            <div class="section parameters-panel">
+                <div class="section-header clickable"
+                    (click)="showParameters.set(!showParameters())">
+                    <h3>Parameters</h3>
+                    <span class="toggle-icon">{{ showParameters() ? '▼' : '▶' }}</span>
+                </div>
+
+                @if (showParameters()) {
+                <div class="parameters-grid">
+                    <div class="param-control">
+                        <label>
+                            <span class="param-name">Temperature</span>
+                            <span class="param-value">{{ session().parameters.temperature }}</span>
+                        </label>
+                        <input type="range"
+                            [min]="paramLimits.temperature.min"
+                            [max]="paramLimits.temperature.max"
+                            [step]="paramLimits.temperature.step"
+                            [value]="session().parameters.temperature"
+                            (input)="onParameterChange('temperature', $event)">
+                        <div class="param-hint">Controls randomness (0 = deterministic)</div>
+                    </div>
+
+                    <div class="param-control">
+                        <label>
+                            <span class="param-name">Max Tokens</span>
+                            <span class="param-value">{{ session().parameters.maxTokens }}</span>
+                        </label>
+                        <input type="range" [min]="100" [max]="paramLimits.maxTokens.max"
+                            [step]="100" [value]="session().parameters.maxTokens"
+                            (input)="onParameterChange('maxTokens', $event)">
+                        <div class="param-hint">Maximum response length</div>
+                    </div>
+
+                    <div class="param-control">
+                        <label>
+                            <span class="param-name">Top P</span>
+                            <span class="param-value">{{ session().parameters.topP }}</span>
+                        </label>
+                        <input type="range"
+                            [min]="paramLimits.topP.min"
+                            [max]="paramLimits.topP.max"
+                            [step]="paramLimits.topP.step"
+                            [value]="session().parameters.topP"
+                            (input)="onParameterChange('topP', $event)">
+                        <div class="param-hint">Nucleus sampling (lower = more focused)</div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <!-- System Prompt (collapsible) -->
+            <div class="section system-prompt-section">
+                <div class="section-header clickable"
+                    (click)="showSystemPrompt.set(!showSystemPrompt())">
+                    <h3>System Prompt</h3>
+                    <span class="toggle-icon">{{ showSystemPrompt() ? '▼' : '▶' }}</span>
+                </div>
+                @if (showSystemPrompt()) {
+                <textarea class="system-prompt-textarea"
+                    placeholder="Optional system prompt: set the AI's role, tone, or constraints..."
+                    [value]="systemPrompt()"
+                    (input)="onSystemPromptChange($event)">
+                </textarea>
+                <div class="param-hint">{{ systemPrompt().length }} chars — sent as system role message</div>
+                }
+            </div>
+
+            <!-- Prompt Editor -->
+            <div class="section prompt-editor">
+                <div class="section-header">
+                    <h3>Prompt</h3>
+                    <span class="char-count">{{ session().prompt.length }} chars</span>
+                </div>
+                <textarea class="prompt-textarea"
+                    placeholder="Enter your prompt here..."
+                    [value]="session().prompt"
+                    (input)="onPromptChange($event)">
+                </textarea>
+            </div>
+
+        </div>
+
+        <!-- Right Panel: Results -->
+        <div class="right-panel">
+
+            @if (responses().length === 0) {
+            <!-- Empty State -->
+            <div class="empty-state">
+                <div class="empty-icon">🚀</div>
+                <h3>Ready to stream</h3>
+                <p>Select models, enter a prompt, and click <strong>Run Comparison</strong> to start real-time SSE streaming.</p>
+                <div class="stream-info">
+                    <div class="stream-badge">⚡ SSE Streaming</div>
+                    <div class="stream-badge">🔀 Parallel execution</div>
+                    <div class="stream-badge">💰 Per-token cost tracking</div>
+                </div>
+            </div>
+            } @else {
+            <!-- Model Tabs -->
+            <div class="model-tabs">
+                @for (resp of responses(); track resp.modelId) {
+                <div class="tab" [class.active]="activeModelTab() === resp.modelId"
+                    (click)="selectTab(resp.modelId)">
+                    <div class="tab-dot"
+                        [style.background-color]="getModelConfig(resp.modelId).color">
+                    </div>
+                    <span class="tab-name">{{ getModelConfig(resp.modelId).name }}</span>
+
+                    @if (resp.isStreaming) {
+                    <span class="streaming-indicator">⚡</span>
+                    }
+                    @if (getWinnerBadge(resp.modelId)) {
+                    <span class="winner-badge">{{ getWinnerBadge(resp.modelId) }}</span>
+                    }
+                </div>
+                }
+            </div>
+
+            <!-- Active Tab Content -->
+            @for (resp of responses(); track resp.modelId) {
+            @if (activeModelTab() === resp.modelId) {
+            <div class="tab-content">
+
+                <!-- Metrics Bar -->
+                <div class="metrics-bar">
+                    <div class="metric">
+                        <span class="metric-label">Latency</span>
+                        <span class="metric-value">{{ formatLatency(resp.latency) }}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Tokens</span>
+                        <span class="metric-value">{{ resp.tokensUsed.total }}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Cost</span>
+                        <span class="metric-value">{{ formatCost(resp.cost) }}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Quality</span>
+                        <span class="metric-value">
+                            {{ resp.qualityScore != null ? (resp.qualityScore.toFixed(1) + '/10') : '—' }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Response Text -->
+                <div class="response-container">
+                    @if (resp.isStreaming) {
+                    <div class="streaming-text">
+                        {{ streamingText().get(resp.modelId) || '' }}<span class="cursor">▋</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" [style.width.%]="resp.streamProgress"></div>
+                    </div>
+                    } @else if (resp.error) {
+                    <div class="error-text">
+                        <span class="error-icon">⚠</span>
+                        {{ resp.error }}
+                    </div>
+                    } @else {
+                    <div class="response-text">{{ resp.content }}</div>
+                    }
+                </div>
+
+                <!-- Token Breakdown -->
+                <div class="token-breakdown">
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Input Tokens:</span>
+                        <span class="breakdown-value">{{ resp.tokensUsed.input }}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Output Tokens:</span>
+                        <span class="breakdown-value">{{ resp.tokensUsed.output }}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Total Cost:</span>
+                        <span class="breakdown-value">{{ formatCost(resp.cost) }}</span>
+                    </div>
+                </div>
+
+            </div>
+            }
+            }
+
+            <!-- Comparison Summary -->
+            @if (modelComparison() && !isExecuting()) {
+            <div class="comparison-summary">
+                <h4>Comparison Results</h4>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="summary-label">🏆 Best Quality</div>
+                        <div class="summary-value">
+                            {{ getModelConfig(modelComparison()!.highestQualityModel).name }}
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">⚡ Fastest</div>
+                        <div class="summary-value">
+                            {{ getModelConfig(modelComparison()!.fastestModel).name }}
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">💰 Cheapest</div>
+                        <div class="summary-value">
+                            {{ getModelConfig(modelComparison()!.cheapestModel).name }}
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">⭐ Best Value</div>
+                        <div class="summary-value">
+                            {{ getModelConfig(modelComparison()!.bestValueModel).name }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+            }
+
+        </div>
+    </div>
+    }
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- TAB 2: Agent Executor                                           -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    @if (activeMainTab() === 'agent-executor') {
+    <div class="agent-executor-layout">
+
+        <!-- Left Column: Config -->
+        <div class="executor-left-panel">
+
+            <!-- Agent Selector -->
+            <div class="section">
+                <div class="section-header">
+                    <h3>Agent</h3>
+                </div>
+                @if (agentOptions().length > 0) {
+                <select class="executor-select" (change)="onAgentIdChange($event)">
+                    @for (agent of agentOptions(); track agent.id) {
+                    <option [value]="agent.id" [selected]="agent.id === selectedAgentId()">
+                        {{ agent.name }} ({{ agent.type }})
+                    </option>
+                    }
+                </select>
+                } @else {
+                <div class="no-agents-hint">No agents in store — they load from mock WebSocket.</div>
+                <select class="executor-select" (change)="onAgentIdChange($event)">
+                    <option value="agent-001">Orchestrator (orchestrator)</option>
+                    <option value="agent-002">Researcher (researcher)</option>
+                    <option value="agent-003">Coder (coder)</option>
+                </select>
+                }
+            </div>
+
+            <!-- Task Input -->
+            <div class="section">
+                <div class="section-header">
+                    <h3>Task</h3>
+                    <span class="char-count">{{ agentTask().length }} chars</span>
+                </div>
+                <textarea class="executor-task-textarea"
+                    placeholder="Describe the task for the agent to execute...&#10;&#10;Example: Research the latest advances in quantum computing and provide a summary with key findings."
+                    [value]="agentTask()"
+                    (input)="onAgentTaskChange($event)">
+                </textarea>
+            </div>
+
+            <!-- Tools -->
+            <div class="section">
+                <div class="section-header">
+                    <h3>Tools</h3>
+                    <span class="model-count">{{ selectedTools().length }}/{{ executorTools.length }}</span>
+                </div>
+                <div class="tool-grid">
+                    @for (tool of executorTools; track tool.id) {
+                    <div class="tool-chip" [class.selected]="isToolSelected(tool.id)"
+                        (click)="toggleTool(tool.id)">
+                        <span class="tool-icon">{{ tool.icon }}</span>
+                        <span class="tool-label">{{ tool.label }}</span>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Max Steps -->
+            <div class="section">
+                <div class="section-header">
+                    <h3>Max Steps</h3>
+                    <span class="param-value">{{ maxSteps() }}</span>
+                </div>
+                <input type="range" min="1" max="10" step="1"
+                    [value]="maxSteps()"
+                    (input)="onMaxStepsChange($event)">
+                <div class="param-hint">Maximum reasoning + tool steps before final response</div>
+            </div>
+
+            <!-- Execute / Cancel -->
+            <div class="executor-actions">
+                @if (!isExecutorRunning()) {
+                <button class="btn-execute"
+                    [disabled]="agentTask().trim().length === 0"
+                    (click)="runAgentExecutor()">
+                    <span class="btn-icon">▶</span>
+                    Execute Agent Loop
+                </button>
+                } @else {
+                <button class="btn-cancel" (click)="cancelExecutor()">
+                    <span class="btn-icon">■</span>
+                    Stop Execution
+                </button>
+                }
+
+                @if (executorEvents().length > 0 && !isExecutorRunning()) {
+                <button class="btn-clear" (click)="clearExecutorEvents()">
+                    Clear
+                </button>
+                }
+            </div>
+
+        </div>
+
+        <!-- Right Column: Live Thought Stream -->
+        <div class="executor-right-panel">
+
+            <div class="stream-header">
+                <h3 class="stream-title">
+                    Live Thought Stream
+                    @if (isExecutorRunning()) {
+                    <span class="running-dot"></span>
+                    }
+                </h3>
+                @if (executorEvents().length > 0) {
+                <span class="event-count">{{ executorEvents().length }} events</span>
+                }
+            </div>
+
+            @if (executorEvents().length === 0 && !isExecutorRunning()) {
+            <div class="executor-empty">
+                <div class="empty-icon">🤖</div>
+                <h3>Ready to execute</h3>
+                <p>Configure an agent, describe a task, select tools, and click <strong>Execute Agent Loop</strong>.</p>
+                <div class="stream-info">
+                    <div class="stream-badge">💭 Thought steps</div>
+                    <div class="stream-badge">🔧 Tool calls</div>
+                    <div class="stream-badge">🏁 Final response</div>
+                </div>
+            </div>
+            } @else {
+            <div class="thought-stream">
+                @for (event of executorEvents(); track event.stepNumber) {
+                <div class="thought-bubble" [class]="'bubble-' + event.type">
+                    <div class="bubble-header">
+                        <span class="bubble-icon">{{ getEventIcon(event.type) }}</span>
+                        <span class="bubble-label">{{ getEventLabel(event.type) }}</span>
+                        <span class="bubble-step">Step {{ event.stepNumber }}</span>
+                    </div>
+
+                    @if (event.type === 'thought' || event.type === 'final_response') {
+                    <div class="bubble-content">{{ event.content }}</div>
+                    }
+
+                    @if (event.type === 'tool_call') {
+                    <div class="bubble-tool-call">
+                        <span class="tool-name">{{ event.tool }}</span>
+                        <pre class="tool-args">{{ event.args }}</pre>
+                    </div>
+                    }
+
+                    @if (event.type === 'tool_result') {
+                    <div class="bubble-content result-text">{{ event.result }}</div>
+                    }
+
+                    @if (event.type === 'error') {
+                    <div class="bubble-content error-text">⚠ {{ event.error }}</div>
+                    }
+
+                    @if (event.type === 'final_response' && event.metrics) {
+                    <div class="executor-metrics">
+                        <div class="metric-chip">
+                            <span class="chip-icon">🔢</span>
+                            <span>{{ event.metrics.stepsCompleted }} steps</span>
+                        </div>
+                        <div class="metric-chip">
+                            <span class="chip-icon">🪙</span>
+                            <span>{{ event.metrics.tokensUsed }} tokens</span>
+                        </div>
+                        <div class="metric-chip">
+                            <span class="chip-icon">💵</span>
+                            <span>{{ formatCost(event.metrics.cost) }}</span>
+                        </div>
+                        <div class="metric-chip">
+                            <span class="chip-icon">⏱</span>
+                            <span>{{ formatDuration(event.metrics.durationMs) }}</span>
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+
+                @if (isExecutorRunning()) {
+                <div class="thinking-indicator">
+                    <span class="dot-pulse"></span>
+                    <span class="dot-pulse delay-1"></span>
+                    <span class="dot-pulse delay-2"></span>
+                    <span class="thinking-text">Agent is thinking...</span>
+                </div>
+                }
+            </div>
+            }
+
+        </div>
+
+    </div>
+    }
+
+</div>

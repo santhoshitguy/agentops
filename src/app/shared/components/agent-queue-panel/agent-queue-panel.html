@@ -1,0 +1,128 @@
+<div class="queue-panel">
+    <!-- Header -->
+    <div class="queue-header">
+        <div class="header-title">
+            <lucide-icon [img]="listIcon" [size]="16" color="var(--accent-purple)" />
+            <span>Agent Queue</span>
+        </div>
+        <div class="header-stats">
+            <span class="queue-stat active-stat">
+                <span class="stat-dot active-dot"></span>
+                {{ totalActive() }} active
+            </span>
+            <span class="queue-stat queued-stat">
+                <span class="stat-dot queued-dot"></span>
+                {{ totalQueued() }} queued
+            </span>
+        </div>
+    </div>
+
+    <!-- Queue Groups -->
+    <div class="queue-body">
+        @for (group of queueGroups(); track group.label) {
+        @if (group.items.length > 0) {
+        <div class="queue-group">
+            <div class="group-header" [style.--group-color]="group.color">
+                <span class="group-label">{{ group.label }}</span>
+                <span class="group-count">{{ group.items.length }}</span>
+            </div>
+
+            @for (exec of group.items; track exec.id) {
+            <div class="queue-item" (click)="onSelect(exec)">
+                <div class="item-priority-bar" [style.--priority-color]="getPriorityColor(exec.priority)"></div>
+
+                <div class="item-content">
+                    <div class="item-top">
+                        <span class="item-agent">{{ exec.agentName }}</span>
+                        <span class="item-model">{{ exec.model }}</span>
+                    </div>
+                    <div class="item-task">{{ exec.taskName }}</div>
+                    <div class="item-meta">
+                        @if (exec.status === 'queued') {
+                        <span class="item-wait">
+                            <lucide-icon [img]="clockIcon" [size]="10" color="var(--text-muted)" />
+                            waiting
+                        </span>
+                        } @else {
+                        <span class="item-progress-text">{{ exec.progress }}%</span>
+                        }
+                        <span class="item-tokens">{{ (exec.tokensUsed / 1000).toFixed(1) }}K tok</span>
+                        <span class="item-cost">${{ exec.cost.toFixed(3) }}</span>
+                    </div>
+
+                    @if (exec.status !== 'queued') {
+                    <div class="item-progress-bar">
+                        <div class="progress-fill" [style.width.%]="exec.progress"
+                            [style.--bar-color]="group.color">
+                        </div>
+                    </div>
+                    }
+                </div>
+
+                <div class="item-actions">
+                    @if (exec.status === 'queued') {
+                    <button class="action-btn" title="Start" (click)="onAction('start', exec.id, $event)">
+                        <lucide-icon [img]="playIcon" [size]="12" color="var(--accent-green)" />
+                    </button>
+                    <button class="action-btn" title="Move up" (click)="onAction('moveUp', exec.id, $event)">
+                        <lucide-icon [img]="upIcon" [size]="12" color="var(--text-tertiary)" />
+                    </button>
+                    }
+                    @if (exec.status !== 'queued') {
+                    <button class="action-btn" title="Pause" (click)="onAction('pause', exec.id, $event)">
+                        <lucide-icon [img]="pauseIcon" [size]="12" color="var(--accent-orange)" />
+                    </button>
+                    }
+                    <button class="action-btn" title="Cancel" (click)="onAction('cancel', exec.id, $event)">
+                        <lucide-icon [img]="xIcon" [size]="12" color="var(--accent-red)" />
+                    </button>
+                </div>
+            </div>
+            }
+        </div>
+        }
+        }
+
+        <!-- Recent Completed -->
+        @if (recentCompleted().length > 0) {
+        <div class="queue-group">
+            <div class="group-header" style="--group-color: var(--text-muted)">
+                <span class="group-label">Recent</span>
+                <span class="group-count">{{ recentCompleted().length }}</span>
+            </div>
+            @for (exec of recentCompleted(); track exec.id) {
+            <div class="queue-item completed" [class.failed]="exec.status === 'failed'" (click)="onSelect(exec)">
+                <div class="item-status-icon">
+                    @if (exec.status === 'completed') {
+                    <lucide-icon [img]="checkIcon" [size]="14" color="var(--accent-green)" />
+                    } @else {
+                    <lucide-icon [img]="alertIcon" [size]="14" color="var(--accent-red)" />
+                    }
+                </div>
+                <div class="item-content">
+                    <div class="item-top">
+                        <span class="item-agent">{{ exec.agentName }}</span>
+                        <span class="item-duration">{{ getElapsedTime(exec) }}</span>
+                    </div>
+                    <div class="item-task">{{ exec.taskName }}</div>
+                </div>
+            </div>
+            }
+        </div>
+        }
+
+        <!-- Queue Stats -->
+        <div class="queue-stats-bar">
+            <div class="queue-stat-item">
+                <lucide-icon [img]="clockIcon" [size]="12" color="var(--text-muted)" />
+                <span class="qs-label">Avg Wait</span>
+                <span class="qs-value">{{ avgWaitTime() }}</span>
+            </div>
+            <div class="queue-stat-item">
+                <lucide-icon [img]="zapIcon" [size]="12" color="var(--accent-cyan)" />
+                <span class="qs-label">Throughput</span>
+                <span class="qs-value">{{ totalActive() }}/min</span>
+            </div>
+        </div>
+    </div>
+</div>

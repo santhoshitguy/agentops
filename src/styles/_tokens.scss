@@ -1,0 +1,464 @@
+// ============================================
+// AgentOps Pro - Design System Tokens
+// Enhanced Dark Theme Based on Reference Design
+// ============================================
+
+:root {
+    // ==========================================
+    // COLOR PALETTE - Deep Navy Theme
+    // ==========================================
+
+    // Background Layers (darkest to lightest)
+    --bg-void: #000000;
+    --bg-space: #020408;
+    --bg-deep: #040810;
+    --bg-primary: #060c16;
+    --bg-secondary: #081018;
+    --bg-tertiary: #0a141e;
+    --bg-elevated: #0c1824;
+    --bg-surface: #0e1c2a;
+    --bg-overlay: #101f30;
+    --bg-card: #0a1420;
+    --bg-panel: #081014;
+
+    // Glassmorphism Backgrounds
+    --glass-bg: rgba(8, 16, 28, 0.9);
+    --glass-bg-light: rgba(14, 24, 38, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.06);
+    --glass-border-light: rgba(255, 255, 255, 0.1);
+    --glass-border-active: rgba(255, 255, 255, 0.15);
+
+    // ==========================================
+    // ACCENT COLORS - Neon Node Spectrum
+    // ==========================================
+
+    // Primary - Cyan/Electric Blue (Orchestrator)
+    --accent-cyan: #00e5ff;
+    --accent-cyan-dim: #00b8d4;
+    --accent-cyan-bright: #4df3ff;
+    --accent-cyan-glow: rgba(0, 229, 255, 0.5);
+    --accent-cyan-subtle: rgba(0, 229, 255, 0.12);
+    --accent-cyan-ring: rgba(0, 229, 255, 0.3);
+
+    // Green (Goal/Success nodes)
+    --accent-green: #00e676;
+    --accent-green-dim: #00c853;
+    --accent-green-bright: #69f0ae;
+    --accent-green-glow: rgba(0, 230, 118, 0.5);
+    --accent-green-subtle: rgba(0, 230, 118, 0.12);
+    --accent-green-ring: rgba(0, 230, 118, 0.3);
+
+    // Purple/Violet (UCLAM/Processing nodes)
+    --accent-purple: #b388ff;
+    --accent-purple-dim: #7c4dff;
+    --accent-purple-bright: #d4b8ff;
+    --accent-purple-glow: rgba(179, 136, 255, 0.5);
+    --accent-purple-subtle: rgba(179, 136, 255, 0.12);
+    --accent-purple-ring: rgba(179, 136, 255, 0.3);
+
+    // Pink/Magenta (Researcher nodes)
+    --accent-pink: #ff4081;
+    --accent-pink-dim: #f50057;
+    --accent-pink-bright: #ff80ab;
+    --accent-pink-glow: rgba(255, 64, 129, 0.5);
+    --accent-pink-subtle: rgba(255, 64, 129, 0.12);
+    --accent-pink-ring: rgba(255, 64, 129, 0.3);
+
+    // Orange (Scoring/Warning nodes)
+    --accent-orange: #ff9100;
+    --accent-orange-dim: #ff6d00;
+    --accent-orange-bright: #ffab40;
+    --accent-orange-glow: rgba(255, 145, 0, 0.5);
+    --accent-orange-subtle: rgba(255, 145, 0, 0.12);
+    --accent-orange-ring: rgba(255, 145, 0, 0.3);
+
+    // Light Blue (Writer/Output nodes)
+    --accent-lightblue: #40c4ff;
+    --accent-lightblue-dim: #00b0ff;
+    --accent-lightblue-bright: #80d8ff;
+    --accent-lightblue-glow: rgba(64, 196, 255, 0.5);
+    --accent-lightblue-subtle: rgba(64, 196, 255, 0.12);
+    --accent-lightblue-ring: rgba(64, 196, 255, 0.3);
+
+    // Red (Error/Alert)
+    --accent-red: #ff5252;
+    --accent-red-dim: #ff1744;
+    --accent-red-bright: #ff8a80;
+    --accent-red-glow: rgba(255, 82, 82, 0.5);
+    --accent-red-subtle: rgba(255, 82, 82, 0.12);
+
+    // Yellow (Attention/Highlight)
+    --accent-yellow: #ffea00;
+    --accent-yellow-dim: #ffd600;
+    --accent-yellow-bright: #ffff00;
+    --accent-yellow-glow: rgba(255, 234, 0, 0.5);
+    --accent-yellow-subtle: rgba(255, 234, 0, 0.12);
+
+    // ==========================================
+    // SEMANTIC COLORS
+    // ==========================================
+
+    --accent-primary: var(--accent-cyan);
+    --accent-primary-dim: var(--accent-cyan-dim);
+    --accent-primary-bright: var(--accent-cyan-bright);
+    --accent-primary-glow: var(--accent-cyan-glow);
+    --accent-primary-subtle: var(--accent-cyan-subtle);
+
+    --accent-secondary: var(--accent-purple);
+    --accent-secondary-dim: var(--accent-purple-dim);
+    --accent-secondary-bright: var(--accent-purple-bright);
+    --accent-secondary-glow: var(--accent-purple-glow);
+    --accent-secondary-subtle: var(--accent-purple-subtle);
+
+    --accent-tertiary: var(--accent-pink);
+    --accent-tertiary-dim: var(--accent-pink-dim);
+    --accent-tertiary-bright: var(--accent-pink-bright);
+    --accent-tertiary-glow: var(--accent-pink-glow);
+    --accent-tertiary-subtle: var(--accent-pink-subtle);
+
+    --accent-success: var(--accent-green);
+    --accent-success-dim: var(--accent-green-dim);
+    --accent-success-bright: var(--accent-green-bright);
+    --accent-success-glow: var(--accent-green-glow);
+    --accent-success-subtle: var(--accent-green-subtle);
+
+    --accent-warning: var(--accent-orange);
+    --accent-warning-dim: var(--accent-orange-dim);
+    --accent-warning-bright: var(--accent-orange-bright);
+    --accent-warning-glow: var(--accent-orange-glow);
+    --accent-warning-subtle: var(--accent-orange-subtle);
+
+    --accent-error: var(--accent-red);
+    --accent-error-dim: var(--accent-red-dim);
+    --accent-error-bright: var(--accent-red-bright);
+    --accent-error-glow: var(--accent-red-glow);
+    --accent-error-subtle: var(--accent-red-subtle);
+
+    --accent-info: var(--accent-lightblue);
+    --accent-info-dim: var(--accent-lightblue-dim);
+    --accent-info-bright: var(--accent-lightblue-bright);
+    --accent-info-glow: var(--accent-lightblue-glow);
+    --accent-info-subtle: var(--accent-lightblue-subtle);
+
+    // ==========================================
+    // TEXT COLORS
+    // ==========================================
+
+    --text-primary: #f0f4f8;
+    --text-secondary: #b0bec5;
+    --text-tertiary: #78909c;
+    --text-muted: #546e7a;
+    --text-disabled: #37474f;
+    --text-inverse: #0a1420;
+
+    // ==========================================
+    // GRADIENT DEFINITIONS
+    // ==========================================
+
+    // Primary Gradients
+    --gradient-primary: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
+    --gradient-secondary: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-pink) 100%);
+    --gradient-success: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-cyan) 100%);
+    --gradient-warning: linear-gradient(135deg, var(--accent-orange) 0%, var(--accent-yellow) 100%);
+
+    // Background Mesh Gradient (subtle ambient glow)
+    --gradient-bg-mesh:
+        radial-gradient(ellipse at 20% 20%, rgba(0, 229, 255, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(179, 136, 255, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(0, 230, 118, 0.02) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 80%, rgba(255, 64, 129, 0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(64, 196, 255, 0.03) 0%, transparent 50%);
+
+    // Glow Gradients
+    --gradient-glow-cyan: radial-gradient(circle, var(--accent-cyan-glow) 0%, transparent 70%);
+    --gradient-glow-purple: radial-gradient(circle, var(--accent-purple-glow) 0%, transparent 70%);
+    --gradient-glow-green: radial-gradient(circle, var(--accent-green-glow) 0%, transparent 70%);
+    --gradient-glow-pink: radial-gradient(circle, var(--accent-pink-glow) 0%, transparent 70%);
+    --gradient-glow-orange: radial-gradient(circle, var(--accent-orange-glow) 0%, transparent 70%);
+
+    // ==========================================
+    // BORDER COLORS
+    // ==========================================
+
+    --border-primary: rgba(255, 255, 255, 0.05);
+    --border-secondary: rgba(255, 255, 255, 0.08);
+    --border-tertiary: rgba(255, 255, 255, 0.12);
+    --border-focus: var(--accent-cyan);
+    --border-error: var(--accent-red);
+
+    // ==========================================
+    // SHADOWS & GLOWS
+    // ==========================================
+
+    // Elevation Shadows
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.5), 0 6px 12px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.6);
+
+    // Node Glow Shadows
+    --glow-cyan: 0 0 20px var(--accent-cyan-glow), 0 0 40px rgba(0, 229, 255, 0.25);
+    --glow-cyan-intense: 0 0 30px var(--accent-cyan-glow), 0 0 60px rgba(0, 229, 255, 0.35), 0 0 100px rgba(0, 229, 255, 0.2);
+    --glow-green: 0 0 20px var(--accent-green-glow), 0 0 40px rgba(0, 230, 118, 0.25);
+    --glow-green-intense: 0 0 30px var(--accent-green-glow), 0 0 60px rgba(0, 230, 118, 0.35);
+    --glow-purple: 0 0 20px var(--accent-purple-glow), 0 0 40px rgba(179, 136, 255, 0.25);
+    --glow-purple-intense: 0 0 30px var(--accent-purple-glow), 0 0 60px rgba(179, 136, 255, 0.35);
+    --glow-pink: 0 0 20px var(--accent-pink-glow), 0 0 40px rgba(255, 64, 129, 0.25);
+    --glow-pink-intense: 0 0 30px var(--accent-pink-glow), 0 0 60px rgba(255, 64, 129, 0.35);
+    --glow-orange: 0 0 20px var(--accent-orange-glow), 0 0 40px rgba(255, 145, 0, 0.25);
+    --glow-orange-intense: 0 0 30px var(--accent-orange-glow), 0 0 60px rgba(255, 145, 0, 0.35);
+    --glow-lightblue: 0 0 20px var(--accent-lightblue-glow), 0 0 40px rgba(64, 196, 255, 0.25);
+    --glow-red: 0 0 20px var(--accent-red-glow), 0 0 40px rgba(255, 82, 82, 0.25);
+
+    // ==========================================
+    // TYPOGRAPHY
+    // ==========================================
+
+    // Font Families
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Rajdhani', 'Inter', sans-serif;
+    --font-mono: 'Fira Code', 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+
+    // Font Sizes
+    --text-2xs: 0.625rem; // 10px
+    --text-xs: 0.6875rem; // 11px
+    --text-sm: 0.8125rem; // 13px
+    --text-base: 0.875rem; // 14px
+    --text-lg: 1rem; // 16px
+    --text-xl: 1.125rem; // 18px
+    --text-2xl: 1.375rem; // 22px
+    --text-3xl: 1.75rem; // 28px
+    --text-4xl: 2.25rem; // 36px
+    --text-5xl: 3rem; // 48px
+
+    // Font Weights
+    --font-light: 300;
+    --font-normal: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+
+    // Line Heights
+    --leading-none: 1;
+    --leading-tight: 1.2;
+    --leading-snug: 1.35;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.65;
+
+    // Letter Spacing
+    --tracking-tighter: -0.04em;
+    --tracking-tight: -0.02em;
+    --tracking-normal: 0;
+    --tracking-wide: 0.02em;
+    --tracking-wider: 0.05em;
+    --tracking-widest: 0.1em;
+
+    // ==========================================
+    // SPACING
+    // ==========================================
+
+    --space-0: 0;
+    --space-px: 1px;
+    --space-0-5: 0.125rem; // 2px
+    --space-1: 0.25rem; // 4px
+    --space-1-5: 0.375rem; // 6px
+    --space-2: 0.5rem; // 8px
+    --space-2-5: 0.625rem; // 10px
+    --space-3: 0.75rem; // 12px
+    --space-3-5: 0.875rem; // 14px
+    --space-4: 1rem; // 16px
+    --space-5: 1.25rem; // 20px
+    --space-6: 1.5rem; // 24px
+    --space-7: 1.75rem; // 28px
+    --space-8: 2rem; // 32px
+    --space-10: 2.5rem; // 40px
+    --space-12: 3rem; // 48px
+    --space-16: 4rem; // 64px
+    --space-20: 5rem; // 80px
+
+    // ==========================================
+    // BORDER RADIUS
+    // ==========================================
+
+    --radius-none: 0;
+    --radius-sm: 0.1875rem; // 3px
+    --radius-md: 0.375rem; // 6px
+    --radius-lg: 0.5rem; // 8px
+    --radius-xl: 0.75rem; // 12px
+    --radius-2xl: 1rem; // 16px
+    --radius-3xl: 1.5rem; // 24px
+    --radius-full: 9999px;
+
+    // ==========================================
+    // TRANSITIONS
+    // ==========================================
+
+    --transition-fastest: 50ms;
+    --transition-fast: 150ms;
+    --transition-normal: 200ms;
+    --transition-slow: 300ms;
+    --transition-slower: 500ms;
+
+    --ease-linear: linear;
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    // ==========================================
+    // Z-INDEX SCALE
+    // ==========================================
+
+    --z-deep: -1;
+    --z-base: 0;
+    --z-raised: 10;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-overlay: 300;
+    --z-modal: 400;
+    --z-popover: 500;
+    --z-toast: 600;
+    --z-tooltip: 700;
+    --z-max: 9999;
+
+    // ==========================================
+    // LAYOUT
+    // ==========================================
+
+    --sidebar-expanded: 230px;
+    --sidebar-collapsed: 64px;
+    --sidebar-width: var(--sidebar-expanded);
+    --sidebar-transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --header-height: 48px;
+    --panel-gap: var(--space-2);
+    --left-panel-width: 220px;
+    --right-panel-width: 340px;
+    --bottom-bar-height: 40px;
+
+    // ==========================================
+    // AGENT NODE COLORS
+    // ==========================================
+
+    --node-orchestrator: var(--accent-cyan);
+    --node-orchestrator-glow: var(--accent-cyan-glow);
+    --node-orchestrator-ring: var(--accent-cyan-ring);
+
+    --node-goal: var(--accent-green);
+    --node-goal-glow: var(--accent-green-glow);
+    --node-goal-ring: var(--accent-green-ring);
+
+    --node-uclam: var(--accent-purple);
+    --node-uclam-glow: var(--accent-purple-glow);
+    --node-uclam-ring: var(--accent-purple-ring);
+
+    --node-researcher: var(--accent-pink);
+    --node-researcher-glow: var(--accent-pink-glow);
+    --node-researcher-ring: var(--accent-pink-ring);
+
+    --node-scorer: var(--accent-orange);
+    --node-scorer-glow: var(--accent-orange-glow);
+    --node-scorer-ring: var(--accent-orange-ring);
+
+    --node-writer: var(--accent-lightblue);
+    --node-writer-glow: var(--accent-lightblue-glow);
+    --node-writer-ring: var(--accent-lightblue-ring);
+
+    --node-coder: var(--accent-green);
+    --node-coder-glow: var(--accent-green-glow);
+    --node-coder-ring: var(--accent-green-ring);
+
+    --node-reviewer: var(--accent-yellow);
+    --node-reviewer-glow: var(--accent-yellow-glow);
+    --node-reviewer-ring: rgba(255, 234, 0, 0.3);
+
+    // ==========================================
+    // TERMINAL COLORS
+    // ==========================================
+
+    --terminal-bg: #050a0f;
+    --terminal-border: rgba(255, 255, 255, 0.06);
+    --terminal-header: #0a1018;
+    --terminal-text: #c5d1de;
+    --terminal-timestamp: #546e7a;
+    --terminal-info: var(--accent-cyan);
+    --terminal-success: var(--accent-green);
+    --terminal-warning: var(--accent-orange);
+    --terminal-error: var(--accent-red);
+    --terminal-debug: var(--accent-purple);
+    --terminal-highlight: rgba(255, 234, 0, 0.2);
+    --terminal-function: #82aaff;
+    --terminal-string: #c3e88d;
+    --terminal-number: #f78c6c;
+    --terminal-keyword: #c792ea;
+    --terminal-comment: #546e7a;
+
+    // ==========================================
+    // CONNECTION LINES
+    // ==========================================
+
+    --connection-width: 2px;
+    --connection-glow-width: 8px;
+    --particle-size: 4px;
+    --particle-glow: 12px;
+
+    // ==========================================
+    // GAUGE COLORS
+    // ==========================================
+
+    --gauge-track: rgba(255, 255, 255, 0.08);
+    --gauge-bg: var(--bg-deep);
+
+    // ==========================================
+    // SVG NODE GLOW EFFECTS
+    // ==========================================
+
+    // Outer ring glow radii
+    --node-outer-radius: 42px;
+    --node-main-radius: 32px;
+    --node-inner-radius: 28px;
+    --node-icon-size: 20px;
+
+    // SVG glow filter intensities
+    --svg-glow-std-soft: 6;
+    --svg-glow-std-medium: 10;
+    --svg-glow-std-intense: 16;
+    --svg-glow-opacity-soft: 0.4;
+    --svg-glow-opacity-medium: 0.6;
+    --svg-glow-opacity-intense: 0.8;
+
+    // Pulse ring animation
+    --pulse-ring-min-r: 35;
+    --pulse-ring-max-r: 48;
+    --pulse-ring-duration: 2.5s;
+
+    // Wave connection tokens
+    --wave-particle-count: 4;
+    --wave-dash-length: 8;
+    --wave-dash-gap: 6;
+    --wave-flow-speed: 1.5s;
+    --wave-glow-blur: 6px;
+
+    // ==========================================
+    // STATUS COLORS
+    // ==========================================
+
+    --status-active: var(--accent-green);
+    --status-idle: var(--accent-orange);
+    --status-processing: var(--accent-cyan);
+    --status-error: var(--accent-red);
+    --status-waiting: var(--accent-purple);
+}
+
+// ==========================================
+// DARK MODE FORCED
+// ==========================================
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+    }
+}
+
+html {
+    color-scheme: dark;
+}

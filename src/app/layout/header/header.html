@@ -1,0 +1,147 @@
+<header class="app-header">
+    <div class="header-left">
+        <button class="header-btn menu-btn" (click)="toggleSidebar.emit()">
+            <lucide-icon [img]="menuIcon" [size]="20" color="currentColor" />
+        </button>
+
+        <div class="breadcrumb">
+            <span class="breadcrumb-item">AgentOps</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current">Dashboard</span>
+        </div>
+
+        <!-- ── Tier badge ───────────────────────────────────────────── -->
+        <span
+            class="tier-badge"
+            [style.--tier-color]="flags.tierBadgeColor()"
+            [title]="flags.tierInfo().description">
+            {{ flags.tierLabel() }}
+        </span>
+    </div>
+
+    <div class="header-center">
+        <!-- Search trigger — emits to Layout which calls searchService.open() -->
+        <button class="search-trigger" (click)="openSearch.emit()">
+            <lucide-icon [img]="searchIcon" [size]="14" color="currentColor" />
+            <span class="search-placeholder">Search agents, logs...</span>
+            <span class="search-shortcut">
+                <kbd>&#8984;</kbd><kbd>K</kbd>
+            </span>
+        </button>
+    </div>
+
+    <div class="header-right">
+
+        <!-- ── Data-mode toggle ─────────────────────────────────────── -->
+        <button
+            class="data-mode-toggle"
+            [class.mode-live]="dataModeService.isLive()"
+            (click)="dataModeService.toggle()"
+            [title]="dataModeService.isMock() ? 'Switch to Live data' : 'Switch to Mock data'">
+            <span class="mode-dot"></span>
+            <lucide-icon
+                [img]="dataModeService.isMock() ? databaseIcon : wifiIcon"
+                [size]="11"
+                color="currentColor" />
+            <span class="mode-label">{{ dataModeService.isMock() ? 'Mock' : 'Live' }}</span>
+        </button>
+
+        <div class="header-status">
+            <lucide-icon [img]="zapIcon" [size]="14" color="#00e676" />
+            <span class="status-text">All Systems Operational</span>
+        </div>
+
+        <app-notification-dropdown></app-notification-dropdown>
+
+        <!-- ── User avatar + dropdown ──────────────────────────────── -->
+        <div
+            class="header-user"
+            [class.dropdown-open]="dropdownOpen()"
+            (click)="toggleDropdown()">
+
+            <div class="user-avatar-sm">
+                <img
+                    [src]="auth.userAvatar() || 'https://api.dicebear.com/7.x/avataaars/svg?seed=demo'"
+                    [alt]="auth.displayName()" />
+            </div>
+            <span class="user-display-name">{{ auth.displayName() }}</span>
+            <lucide-icon
+                [img]="chevronIcon"
+                [size]="13"
+                color="currentColor"
+                class="dropdown-chevron" />
+
+            <!-- ── Dropdown panel ──────────────────────────────────── -->
+            @if (dropdownOpen()) {
+            <div class="user-dropdown" (click)="$event.stopPropagation()">
+
+                <!-- User info header -->
+                <div class="dropdown-user-info">
+                    <div class="dropdown-avatar">
+                        <img
+                            [src]="auth.userAvatar() || 'https://api.dicebear.com/7.x/avataaars/svg?seed=demo'"
+                            [alt]="auth.displayName()" />
+                    </div>
+                    <div class="dropdown-user-meta">
+                        <span class="dropdown-user-name">{{ auth.displayName() }}</span>
+                        <span class="dropdown-user-email">{{ auth.userEmail() }}</span>
+                        <span class="dropdown-role-badge">{{ auth.userRole() }}</span>
+                    </div>
+                </div>
+
+                <div class="dropdown-divider"></div>
+
+                <!-- Navigation -->
+                <div class="dropdown-section">
+                    <button class="dropdown-item" (click)="navigateTo('/settings')">
+                        <lucide-icon [img]="settingsIcon" [size]="15" color="currentColor" />
+                        <span>Settings</span>
+                    </button>
+                    <button class="dropdown-item" (click)="navigateTo('/settings')">
+                        <lucide-icon [img]="keyIcon" [size]="15" color="currentColor" />
+                        <span>API Keys</span>
+                    </button>
+                    <button class="dropdown-item" (click)="navigateTo('/compliance-audit')">
+                        <lucide-icon [img]="shieldIcon" [size]="15" color="currentColor" />
+                        <span>Compliance & Audit</span>
+                    </button>
+                </div>
+
+                <div class="dropdown-divider"></div>
+
+                <!-- Data mode toggle row -->
+                <div class="dropdown-section">
+                    <div class="dropdown-mode-row">
+                        <lucide-icon [img]="monitorIcon" [size]="15" color="currentColor" />
+                        <span class="dropdown-mode-label">Data Mode</span>
+                        <button
+                            class="mode-pill"
+                            [class.live]="dataModeService.isLive()"
+                            (click)="toggleDataMode($event)">
+                            <span class="mode-pill-dot"></span>
+                            <span>{{ dataModeService.isMock() ? 'Mock' : 'Live' }}</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="dropdown-divider"></div>
+
+                <!-- Docs + Sign out -->
+                <div class="dropdown-section">
+                    <button class="dropdown-item" (click)="openDocs($event)">
+                        <lucide-icon [img]="docsIcon" [size]="15" color="currentColor" />
+                        <span>Documentation</span>
+                    </button>
+                    <button class="dropdown-item logout-item" (click)="logout()">
+                        <lucide-icon [img]="logoutIcon" [size]="15" color="currentColor" />
+                        <span>Sign Out</span>
+                    </button>
+                </div>
+
+            </div>
+            }
+        </div>
+        <!-- ── /User dropdown ──────────────────────────────────────── -->
+
+    </div>
+</header>

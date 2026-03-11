@@ -1,0 +1,53 @@
+<div class="terminal-stream">
+  <!-- Header bar -->
+  <div class="terminal-header">
+    <div class="terminal-title">
+      <span class="terminal-dot red"></span>
+      <span class="terminal-dot yellow"></span>
+      <span class="terminal-dot green"></span>
+      <span class="title-text">Terminal</span>
+    </div>
+    <div class="terminal-controls">
+      @if (isStreaming()) {
+        <span class="streaming-indicator">
+          <span class="streaming-dot"></span>
+          LIVE
+        </span>
+      }
+      <span class="log-count">{{ logCount() }} lines</span>
+      @if (!autoScroll()) {
+        <button class="scroll-btn" (click)="scrollToBottom()">
+          Scroll to bottom
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Log area -->
+  <div
+    class="terminal-body"
+    #scrollContainer
+    (scroll)="onScroll($event)">
+    @for (log of visibleLogs(); track trackById($index, log)) {
+      <div class="log-line" [class.log-error]="log.level === 'error'">
+        <span class="log-timestamp">{{ log.timestamp | date:'HH:mm:ss.SSS' }}</span>
+        <span class="log-level" [style.color]="levelColor(log.level)">
+          [{{ levelPrefix(log.level) }}]
+        </span>
+        <span class="log-agent" [style.color]="'#a855f7'">{{ log.agentName }}</span>
+        <span class="log-message" [style.color]="levelColor(log.level)">{{ log.message }}</span>
+      </div>
+    } @empty {
+      <div class="terminal-empty">
+        <span class="empty-prompt">&gt;_</span>
+        <span class="empty-text">Waiting for logs...</span>
+      </div>
+    }
+
+    @if (isStreaming()) {
+      <div class="cursor-line">
+        <span class="cursor-blink">&block;</span>
+      </div>
+    }
+  </div>
+</div>

@@ -9,6 +9,7 @@
 
 # Node modules and dependency files
 /node_modules/
+/mock-server
 /package-lock.json
 /yarn.lock
 

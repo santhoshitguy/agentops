@@ -1,0 +1,171 @@
+<div class="timeline-panel">
+    <!-- Panel Header -->
+    <div class="timeline-header">
+        <div class="header-title">
+            <lucide-icon [img]="playIcon" [size]="16" color="var(--accent-cyan)" />
+            <span>Execution Timeline</span>
+        </div>
+        <div class="header-filters">
+            <button class="filter-chip" [class.active]="filterStatus() === 'all'" (click)="setFilter('all')">
+                All
+            </button>
+            <button class="filter-chip running" [class.active]="filterStatus() === 'executing'"
+                (click)="setFilter('executing')">
+                <span class="dot running-dot"></span>
+                {{ runningCount() }}
+            </button>
+            <button class="filter-chip completed" [class.active]="filterStatus() === 'completed'"
+                (click)="setFilter('completed')">
+                <span class="dot completed-dot"></span>
+                {{ completedCount() }}
+            </button>
+            <button class="filter-chip failed" [class.active]="filterStatus() === 'failed'"
+                (click)="setFilter('failed')">
+                <span class="dot failed-dot"></span>
+                {{ failedCount() }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Execution List -->
+    <div class="timeline-body">
+        @for (exec of filteredExecutions(); track exec.id) {
+        <div class="execution-card" [class.expanded]="isExpanded(exec.id)"
+            [class.selected]="selectedExecutionId() === exec.id" (click)="selectExecution(exec)">
+
+            <!-- Execution Header Row -->
+            <div class="exec-header" (click)="toggleExpand(exec.id); $event.stopPropagation()">
+                <button class="expand-btn">
+                    <lucide-icon [img]="isExpanded(exec.id) ? chevronDownIcon : chevronRightIcon" [size]="14"
+                        color="var(--text-tertiary)" />
+                </button>
+
+                <div class="exec-status-indicator" [style.--status-color]="getStatusColor(exec.status)">
+                    @if (exec.status === 'executing' || exec.status === 'planning' || exec.status === 'initializing') {
+                    <span class="status-pulse"></span>
+                    }
+                </div>
+
+                <div class="exec-info">
+                    <div class="exec-title-row">
+                        <span class="exec-agent-name">{{ exec.agentName }}</span>
+                        <span class="exec-separator">&rarr;</span>
+                        <span class="exec-task-name">{{ exec.taskName }}</span>
+                    </div>
+                    <div class="exec-meta-row">
+                        <span class="exec-model">{{ exec.model }}</span>
+                        <span class="exec-time">{{ formatTime(exec.startTime) }}</span>
+                        <span class="exec-duration">{{ getElapsedTime(exec) }}</span>
+                        @if (exec.priority === 'high' || exec.priority === 'critical') {
+                        <span class="exec-priority" [class.critical]="exec.priority === 'critical'">
+                            {{ exec.priority }}
+                        </span>
+                        }
+                    </div>
+                </div>
+
+                <div class="exec-stats">
+                    <div class="stat-tokens">
+                        <span class="stat-value">{{ (exec.tokensUsed / 1000).toFixed(1) }}K</span>
+                        <span class="stat-label">tokens</span>
+                    </div>
+                    <div class="stat-cost">
+                        <span class="stat-value">${{ exec.cost.toFixed(3) }}</span>
+                    </div>
+                </div>
+
+                <span class="exec-status-badge" [style.--badge-color]="getStatusColor(exec.status)">
+                    {{ getStatusLabel(exec.status) }}
+                </span>
+            </div>
+
+            <!-- Progress Bar -->
+            @if (exec.status === 'executing' || exec.status === 'planning' || exec.status === 'initializing') {
+            <div class="exec-progress">
+                <div class="progress-track">
+                    <div class="progress-fill" [style.width.%]="getProgressWidth(exec)"
+                        [style.--progress-color]="getStatusColor(exec.status)">
+                    </div>
+                </div>
+                <span class="progress-label">{{ exec.progress }}%</span>
+            </div>
+            }
+
+            <!-- Expanded: Step Timeline -->
+            @if (isExpanded(exec.id)) {
+            <div class="steps-timeline">
+                <!-- Phase Headers -->
+                <div class="phase-bar">
+                    @for (phase of ['init', 'plan', 'execute', 'respond']; track phase) {
+                    <div class="phase-segment" [style.--phase-color]="getPhaseColor($any(phase))">
+                        <span class="phase-label">{{ getPhaseLabel($any(phase)) }}</span>
+                    </div>
+                    }
+                </div>
+
+                <!-- Steps -->
+                @for (step of exec.steps; track step.stepNumber; let isLast = $last) {
+                <div class="step-row" [class.failed]="!step.success"
+                    (click)="onStepClick(exec, step); $event.stopPropagation()">
+                    <div class="step-connector">
+                        <div class="connector-dot" [style.--dot-color]="getPhaseColor(step.phase)">
+                            @if (!step.success) {
+                            <lucide-icon [img]="xIcon" [size]="10" color="var(--accent-red)" />
+                            } @else {
+                            <lucide-icon [img]="checkIcon" [size]="10" color="var(--accent-green)" />
+                            }
+                        </div>
+                        @if (!isLast) {
+                        <div class="connector-line" [style.--line-color]="getPhaseColor(step.phase)"></div>
+                        }
+                    </div>
+
+                    <div class="step-content">
+                        <div class="step-header">
+                            <lucide-icon [img]="getActionIcon(step.action)" [size]="13"
+                                [color]="getPhaseColor(step.phase)" />
+                            <span class="step-action">{{ step.action }}</span>
+                            <span class="step-phase-tag" [style.--tag-color]="getPhaseColor(step.phase)">
+                                {{ getPhaseLabel(step.phase) }}
+                            </span>
+                        </div>
+                        <div class="step-description">{{ step.description }}</div>
+                        <div class="step-metrics">
+                            <span class="step-duration">
+                                <lucide-icon [img]="clockIcon" [size]="11" color="var(--text-muted)" />
+                                {{ formatDuration(step.duration) }}
+                            </span>
+                            <span class="step-tokens">{{ step.tokensUsed }} tok</span>
+                            @if (step.retryCount && step.retryCount > 0) {
+                            <span class="step-retries">{{ step.retryCount }} retries</span>
+                            }
+                            @if (step.toolCalls && step.toolCalls.length > 0) {
+                            <span class="step-tools">{{ step.toolCalls.length }} tool calls</span>
+                            }
+                        </div>
+                    </div>
+
+                    <span class="step-time">{{ formatTime(step.startTime) }}</span>
+                </div>
+                }
+
+                <!-- Error Message -->
+                @if (exec.errorMessage) {
+                <div class="exec-error">
+                    <lucide-icon [img]="xIcon" [size]="14" color="var(--accent-red)" />
+                    <span>{{ exec.errorMessage }}</span>
+                </div>
+                }
+            </div>
+            }
+        </div>
+        }
+
+        @if (filteredExecutions().length === 0) {
+        <div class="empty-state">
+            <lucide-icon [img]="clockIcon" [size]="32" color="var(--text-muted)" />
+            <span>No executions to display</span>
+        </div>
+        }
+    </div>
+</div>

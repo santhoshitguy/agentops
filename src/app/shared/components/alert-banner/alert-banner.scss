@@ -1,0 +1,48 @@
+.alert-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-left: 3px solid;
+  animation: slideDown 0.3s ease;
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.severity-icon { font-size: 1rem; }
+.banner-title { font-size: 0.8rem; font-weight: 600; color: #e6edf3; white-space: nowrap; }
+.banner-message { font-size: 0.75rem; color: #8b949e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.banner-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+.ack-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #e6edf3;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  &:hover { background: rgba(255,255,255,0.15); }
+}
+
+.dismiss-btn {
+  background: none;
+  border: none;
+  color: #8b949e;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0 4px;
+  &:hover { color: #e6edf3; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

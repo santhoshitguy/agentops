@@ -1,0 +1,38 @@
+<div class="stats-bar">
+    @for (card of cards(); track card.label) {
+    <div class="stat-card">
+        <div class="stat-icon" [style.--icon-color]="card.color">
+            <lucide-icon [img]="card.icon" [size]="16" [color]="card.color" />
+        </div>
+        <div class="stat-content">
+            <span class="stat-label">{{ card.label }}</span>
+            <div class="stat-value-row">
+                <span class="stat-value" [style.color]="card.color">{{ card.value }}</span>
+                @if (card.sub) {
+                <span class="stat-sub">{{ card.sub }}</span>
+                }
+            </div>
+        </div>
+
+        <!-- Glow accent -->
+        <div class="stat-glow" [style.--glow-color]="card.color"></div>
+    </div>
+    }
+
+    <!-- Mini Success Rate Ring -->
+    <div class="stat-card ring-card">
+        <div class="mini-ring">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+                <circle cx="20" cy="20" [attr.r]="successRateArc().radius" fill="none" stroke="var(--bg-surface)"
+                    stroke-width="3" />
+                <circle cx="20" cy="20" [attr.r]="successRateArc().radius" fill="none"
+                    [attr.stroke]="cards()[1].color" stroke-width="3" stroke-linecap="round"
+                    [attr.stroke-dasharray]="successRateArc().circumference"
+                    [attr.stroke-dashoffset]="successRateArc().offset" transform="rotate(-90 20 20)"
+                    style="transition: stroke-dashoffset 0.8s ease" />
+            </svg>
+            <span class="ring-value">{{ statsSignal().successRate.toFixed(0) }}%</span>
+        </div>
+        <span class="ring-label">Health</span>
+    </div>
+</div>

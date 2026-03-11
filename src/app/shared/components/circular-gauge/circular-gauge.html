@@ -1,0 +1,75 @@
+<div class="gauge-container" [style.width.px]="size()" [style.height.px]="size()">
+    <svg [attr.viewBox]="viewBox()" class="gauge-svg">
+        <defs>
+            <!-- Gradient for the gauge arc -->
+            <linearGradient [id]="gradientId()" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" [attr.stop-color]="colorPalette().primary" />
+                <stop offset="100%" [attr.stop-color]="colorPalette().secondary" />
+            </linearGradient>
+
+            <!-- Glow filter -->
+            <filter [id]="glowId()" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feFlood [attr.flood-color]="colorPalette().glow" flood-opacity="0.8" />
+                <feComposite in2="blur" operator="in" />
+                <feMerge>
+                    <feMergeNode />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+
+            <!-- Drop shadow for depth -->
+            <filter [id]="shadowId()" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3" />
+            </filter>
+        </defs>
+
+        <!-- Background track -->
+        <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="radius()" fill="none" [attr.stroke]="trackColor()"
+            [attr.stroke-width]="strokeWidth()" stroke-linecap="round" class="gauge-track" />
+
+        <!-- Tick marks -->
+        @if (showTicks()) {
+        @for (tick of tickMarks(); track tick.angle) {
+        <line [attr.x1]="tickStart(tick.angle).x" [attr.y1]="tickStart(tick.angle).y" [attr.x2]="tickEnd(tick.angle).x"
+            [attr.y2]="tickEnd(tick.angle).y"
+            [attr.stroke]="tick.isMajor ? 'var(--text-tertiary)' : 'var(--text-muted)'"
+            [attr.stroke-width]="tick.isMajor ? 2 : 1" stroke-linecap="round" class="gauge-tick"
+            [class.major]="tick.isMajor" />
+        }
+        }
+
+        <!-- Value arc (animated) -->
+        <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="radius()" fill="none"
+            [attr.stroke]="'url(#' + gradientId() + ')'" [attr.stroke-width]="strokeWidth()" stroke-linecap="round"
+            [attr.stroke-dasharray]="circumference()" [attr.stroke-dashoffset]="dashOffset()"
+            [attr.filter]="'url(#' + glowId() + ')'" [attr.transform]="'rotate(-90 ' + center() + ' ' + center() + ')'"
+            class="gauge-value" />
+
+        <!-- Center decoration -->
+        <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="innerRadius()" fill="var(--bg-deep)"
+            [attr.filter]="'url(#' + shadowId() + ')'" class="gauge-center" />
+
+        <!-- Inner glow ring -->
+        <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="innerRadius() + 2" fill="none"
+            [attr.stroke]="colorPalette().glow" stroke-width="1" stroke-opacity="0.3" class="gauge-inner-ring" />
+    </svg>
+
+    <!-- Value display -->
+    <div class="gauge-content">
+        <div class="gauge-value-display">
+            <span class="value" [style.color]="colorPalette().primary">
+                {{ animatedValue() | number:'1.0-1' }}
+            </span>
+            @if (unit()) {
+            <span class="unit">{{ unit() }}</span>
+            }
+        </div>
+        @if (label()) {
+        <div class="gauge-label">{{ label() }}</div>
+        }
+        @if (sublabel()) {
+        <div class="gauge-sublabel">{{ sublabel() }}</div>
+        }
+    </div>
+</div>

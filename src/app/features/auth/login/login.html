@@ -1,0 +1,122 @@
+<div class="auth-page">
+  <!-- Animated neon background -->
+  <div class="auth-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Glassmorphism card -->
+  <div class="auth-card">
+
+    <!-- Brand Logo -->
+    <div class="auth-logo">
+      <div class="auth-logo-icon">
+        <lucide-icon [img]="zapIcon" [size]="22" color="var(--bg-deep)" />
+      </div>
+      <span class="auth-brand">AgentOps</span>
+      <span class="auth-brand-tag">PRO</span>
+    </div>
+
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-subtitle">Sign in to your AI operations dashboard</p>
+
+    <!-- Demo Banner -->
+    <div class="demo-banner">
+      <span class="demo-dot"></span>
+      Demo mode — credentials pre-filled
+    </div>
+
+    <!-- Error -->
+    @if (errorMessage()) {
+      <div class="auth-error">{{ errorMessage() }}</div>
+    }
+
+    <!-- Form -->
+    <form class="auth-form" (ngSubmit)="onSubmit()">
+
+      <!-- Email -->
+      <div class="form-group">
+        <label class="form-label" for="login-email">Email</label>
+        <div class="input-wrapper">
+          <lucide-icon [img]="mailIcon" [size]="15" color="var(--text-muted)" class="input-icon" />
+          <input
+            id="login-email"
+            type="email"
+            class="form-input"
+            [value]="email()"
+            (input)="setEmail($any($event.target).value)"
+            placeholder="your@email.com"
+            autocomplete="email"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <div class="form-label-row">
+          <label class="form-label" for="login-password">Password</label>
+          <a class="form-link" routerLink="/auth/login">Forgot password?</a>
+        </div>
+        <div class="input-wrapper">
+          <lucide-icon [img]="lockIcon" [size]="15" color="var(--text-muted)" class="input-icon" />
+          <input
+            id="login-password"
+            [type]="showPassword() ? 'text' : 'password'"
+            class="form-input"
+            [value]="password()"
+            (input)="setPassword($any($event.target).value)"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          />
+          <button type="button" class="input-toggle" (click)="togglePasswordVisibility()" aria-label="Toggle password">
+            @if (showPassword()) {
+              <lucide-icon [img]="eyeOffIcon" [size]="15" color="var(--text-muted)" />
+            } @else {
+              <lucide-icon [img]="eyeIcon" [size]="15" color="var(--text-muted)" />
+            }
+          </button>
+        </div>
+      </div>
+
+      <!-- Remember me -->
+      <div class="form-row">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            [checked]="remember()"
+            (change)="setRemember($any($event.target).checked)"
+          />
+          <span>Remember me for 30 days</span>
+        </label>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-primary" [disabled]="isLoading()">
+        @if (isLoading()) {
+          <span class="spinner"></span>
+          <span>Signing in...</span>
+        } @else {
+          <span>Sign In</span>
+          <lucide-icon [img]="chevronIcon" [size]="16" color="currentColor" />
+        }
+      </button>
+
+    </form>
+
+    <!-- Switch to register -->
+    <p class="auth-switch">
+      New to AgentOps?
+      <a routerLink="/auth/register" class="form-link">Create an account</a>
+    </p>
+
+    <!-- Decorative divider -->
+    <div class="auth-divider">
+      <span>Secure · Encrypted · Enterprise-grade</span>
+    </div>
+
+  </div>
+</div>

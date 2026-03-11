@@ -1,0 +1,8 @@
+<span [ngClass]="badgeClasses()">
+  <span class="status-dot" [style.background-color]="colorValue()">
+    @if (shouldPulse()) {
+      <span class="pulse-ring" [style.border-color]="colorValue()"></span>
+    }
+  </span>
+  <span class="status-label">{{ displayLabel() }}</span>
+</span>

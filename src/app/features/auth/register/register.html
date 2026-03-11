@@ -1,0 +1,173 @@
+<div class="auth-page">
+  <!-- Animated neon background -->
+  <div class="auth-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Glassmorphism card -->
+  <div class="auth-card">
+
+    <!-- Brand Logo -->
+    <div class="auth-logo">
+      <div class="auth-logo-icon">
+        <lucide-icon [img]="zapIcon" [size]="22" color="var(--bg-deep)" />
+      </div>
+      <span class="auth-brand">AgentOps</span>
+      <span class="auth-brand-tag">PRO</span>
+    </div>
+
+    <h1 class="auth-title">Create your account</h1>
+    <p class="auth-subtitle">Start monitoring your AI agents in minutes</p>
+
+    <!-- Error -->
+    @if (errorMessage()) {
+      <div class="auth-error">{{ errorMessage() }}</div>
+    }
+
+    <!-- Form -->
+    <form class="auth-form" (ngSubmit)="onSubmit()">
+
+      <!-- Name -->
+      <div class="form-group">
+        <label class="form-label" for="reg-name">Full Name</label>
+        <div class="input-wrapper">
+          <lucide-icon [img]="userIcon" [size]="15" color="var(--text-muted)" class="input-icon" />
+          <input
+            id="reg-name"
+            type="text"
+            class="form-input"
+            [value]="name()"
+            (input)="setName($any($event.target).value)"
+            placeholder="Alex Johnson"
+            autocomplete="name"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label class="form-label" for="reg-email">Email</label>
+        <div class="input-wrapper">
+          <lucide-icon [img]="mailIcon" [size]="15" color="var(--text-muted)" class="input-icon" />
+          <input
+            id="reg-email"
+            type="email"
+            class="form-input"
+            [value]="email()"
+            (input)="setEmail($any($event.target).value)"
+            placeholder="your@company.com"
+            autocomplete="email"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label class="form-label" for="reg-password">Password</label>
+        <div class="input-wrapper">
+          <lucide-icon [img]="lockIcon" [size]="15" color="var(--text-muted)" class="input-icon" />
+          <input
+            id="reg-password"
+            [type]="showPassword() ? 'text' : 'password'"
+            class="form-input"
+            [value]="password()"
+            (input)="setPassword($any($event.target).value)"
+            placeholder="Min. 8 characters"
+            autocomplete="new-password"
+            required
+          />
+          <button type="button" class="input-toggle" (click)="toggleShowPassword()" aria-label="Toggle password">
+            @if (showPassword()) {
+              <lucide-icon [img]="eyeOffIcon" [size]="15" color="var(--text-muted)" />
+            } @else {
+              <lucide-icon [img]="eyeIcon" [size]="15" color="var(--text-muted)" />
+            }
+          </button>
+        </div>
+        <!-- Password strength bar -->
+        @if (password()) {
+          <div class="strength-bar-container">
+            @for (i of [0, 1, 2, 3]; track i) {
+              <div
+                class="strength-segment"
+                [style.background]="i < passwordStrength() ? strengthColor() : 'var(--border-secondary)'"
+              ></div>
+            }
+            <span class="strength-label" [style.color]="strengthColor()">{{ strengthLabel() }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label class="form-label" for="reg-confirm">Confirm Password</label>
+        <div class="input-wrapper">
+          <lucide-icon [img]="lockIcon" [size]="15" color="var(--text-muted)" class="input-icon" />
+          <input
+            id="reg-confirm"
+            [type]="showConfirmPassword() ? 'text' : 'password'"
+            class="form-input"
+            [class.input-error]="confirmPassword() && !passwordsMatch()"
+            [value]="confirmPassword()"
+            (input)="setConfirmPassword($any($event.target).value)"
+            placeholder="Repeat your password"
+            autocomplete="new-password"
+          />
+          <button type="button" class="input-toggle" (click)="toggleShowConfirmPassword()" aria-label="Toggle confirm password">
+            @if (showConfirmPassword()) {
+              <lucide-icon [img]="eyeOffIcon" [size]="15" color="var(--text-muted)" />
+            } @else {
+              <lucide-icon [img]="eyeIcon" [size]="15" color="var(--text-muted)" />
+            }
+          </button>
+        </div>
+        @if (confirmPassword() && !passwordsMatch()) {
+          <span class="field-error">Passwords do not match</span>
+        }
+      </div>
+
+      <!-- Terms -->
+      <div class="form-row">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            [checked]="acceptTerms()"
+            (change)="setAcceptTerms($any($event.target).checked)"
+          />
+          <span>
+            I agree to the <a class="form-link" routerLink="/auth/register">Terms of Service</a>
+            and <a class="form-link" routerLink="/auth/register">Privacy Policy</a>
+          </span>
+        </label>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-primary" [disabled]="isLoading()">
+        @if (isLoading()) {
+          <span class="spinner"></span>
+          <span>Creating account...</span>
+        } @else {
+          <span>Create Account</span>
+          <lucide-icon [img]="chevronIcon" [size]="16" color="currentColor" />
+        }
+      </button>
+
+    </form>
+
+    <!-- Switch to login -->
+    <p class="auth-switch">
+      Already have an account?
+      <a routerLink="/auth/login" class="form-link">Sign in</a>
+    </p>
+
+    <div class="auth-divider">
+      <span>Secure · Encrypted · Enterprise-grade</span>
+    </div>
+
+  </div>
+</div>

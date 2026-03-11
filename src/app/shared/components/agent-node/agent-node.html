@@ -1,0 +1,80 @@
+<svg [attr.width]="size()" [attr.height]="size()" [class]="nodeClass()" (mouseenter)="onHover(true)"
+    (mouseleave)="onHover(false)" (click)="onClick()">
+    <defs>
+        <!-- Gradient fills -->
+        <linearGradient [id]="gradientId()" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" [attr.stop-color]="colors().primary" />
+            <stop offset="100%" [attr.stop-color]="colors().secondary" />
+        </linearGradient>
+
+        <!-- Inner gradient -->
+        <radialGradient [id]="innerGradientId()" cx="30%" cy="30%" r="70%">
+            <stop offset="0%" [attr.stop-color]="colors().highlight" stop-opacity="0.3" />
+            <stop offset="100%" [attr.stop-color]="colors().primary" stop-opacity="0" />
+        </radialGradient>
+
+        <!-- Glow filter -->
+        <filter [id]="glowFilterId()" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur [attr.stdDeviation]="isHovered() ? 12 : 8" result="blur" />
+            <feFlood [attr.flood-color]="colors().glow" flood-opacity="0.6" />
+            <feComposite in2="blur" operator="in" />
+            <feMerge>
+                <feMergeNode />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+
+        <!-- Pulse animation filter -->
+        <filter [id]="pulseFilterId()" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="20" result="blur" />
+            <feFlood [attr.flood-color]="colors().glow" flood-opacity="0.4" />
+            <feComposite in2="blur" operator="in" />
+        </filter>
+    </defs>
+
+    <!-- Outer pulse ring (animated) -->
+    @if (agent?.status === 'processing' || agent?.status === 'active') {
+    <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="radius() + 20" fill="none" [attr.stroke]="colors().glow"
+        stroke-width="2" class="pulse-ring" [attr.filter]="'url(#' + pulseFilterId() + ')'" />
+    }
+
+    <!-- Background circle with glow -->
+    <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="radius()" [attr.fill]="'url(#' + gradientId() + ')'"
+        [attr.filter]="'url(#' + glowFilterId() + ')'" class="node-bg" />
+
+    <!-- Inner highlight -->
+    <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="radius() - 4"
+        [attr.fill]="'url(#' + innerGradientId() + ')'" class="node-highlight" />
+
+    <!-- Border ring -->
+    <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="radius() - 2" fill="none"
+        [attr.stroke]="colors().border" stroke-width="1.5" stroke-opacity="0.5" class="node-border" />
+
+    <!-- Progress ring (for processing state) -->
+    @if (agent?.status === 'processing') {
+    <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="radius() + 8" fill="none"
+        [attr.stroke]="colors().primary" stroke-width="2" stroke-linecap="round"
+        [attr.stroke-dasharray]="progressDashArray()" class="progress-ring" />
+    }
+
+    <!-- Status indicator dot -->
+    <circle [attr.cx]="center() + radius() * 0.6" [attr.cy]="center() - radius() * 0.6" r="6"
+        [attr.fill]="statusColor()" class="status-dot">
+        @if (agent?.status === 'active' || agent?.status === 'processing') {
+        <animate attributeName="r" values="5;7;5" dur="1.5s" repeatCount="indefinite" />
+        }
+    </circle>
+
+    <!-- Agent icon -->
+    <g [attr.transform]="'translate(' + (center() - 12) + ',' + (center() - 12) + ')'">
+        <svg:path [attr.d]="agentIcon()" [attr.fill]="iconColor()" stroke="none" />
+    </g>
+
+    <!-- Agent name (below node) -->
+    @if (showLabel()) {
+    <text [attr.x]="center()" [attr.y]="size() - 8" text-anchor="middle" [attr.fill]="'var(--text-secondary)'"
+        font-size="11" font-family="var(--font-sans)" font-weight="500">
+        {{ agent?.name || 'Agent' }}
+    </text>
+    }
+</svg>

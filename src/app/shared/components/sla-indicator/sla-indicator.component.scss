@@ -1,0 +1,176 @@
+:host {
+    display: block;
+}
+
+.sla-indicator {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 3px solid;
+    border-radius: 6px;
+    padding: 16px;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.5);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateX(4px);
+    }
+}
+
+// ============================================
+// Header
+// ============================================
+
+.sla-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.sla-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-icon {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-gray-200);
+}
+
+.metric-type {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-gray-500);
+    font-family: var(--font-mono);
+}
+
+// ============================================
+// Metrics
+// ============================================
+
+.sla-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.metric-label {
+    color: var(--color-gray-500);
+    font-weight: 500;
+}
+
+.metric-value {
+    font-weight: 600;
+
+    &.target {
+        color: var(--color-gray-400);
+    }
+
+    &.actual {
+        font-size: 14px;
+    }
+}
+
+// ============================================
+// Progress Bar
+// ============================================
+
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.progress-bar-track {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease, background-color 0.3s ease;
+    box-shadow: 0 0 8px currentColor;
+}
+
+.progress-percentage {
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    min-width: 50px;
+    text-align: right;
+}
+
+// ============================================
+// Footer
+// ============================================
+
+.sla-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.violations {
+    font-size: 11px;
+}
+
+.violation-badge {
+    padding: 3px 8px;
+    background: rgba(255, 82, 82, 0.2);
+    border: 1px solid var(--color-neon-red);
+    border-radius: 4px;
+    color: var(--color-neon-red);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.compliant-badge {
+    padding: 3px 8px;
+    background: rgba(0, 255, 127, 0.2);
+    border: 1px solid var(--color-neon-green);
+    border-radius: 4px;
+    color: var(--color-neon-green);
+    font-weight: 600;
+}
+
+.trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--color-gray-500);
+}
+
+.trend-icon {
+    font-size: 14px;
+}
+
+.trend-label {
+    text-transform: capitalize;
+}

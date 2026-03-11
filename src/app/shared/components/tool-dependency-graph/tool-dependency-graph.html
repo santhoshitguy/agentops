@@ -1,0 +1,118 @@
+<div class="dep-graph-panel">
+    <div class="dep-graph-header">
+        <div class="header-title">
+            <lucide-icon [img]="networkIcon" [size]="16" color="var(--accent-purple)" />
+            <span>Tool Dependencies</span>
+        </div>
+        <div class="header-legend">
+            @for (cat of ['data', 'api', 'compute', 'communication', 'storage', 'analysis']; track cat) {
+            <span class="legend-item">
+                <span class="legend-dot" [style.background]="getCategoryColor($any(cat))"></span>
+                {{ cat }}
+            </span>
+            }
+        </div>
+    </div>
+
+    <div class="dep-graph-body">
+        <svg [attr.viewBox]="viewBox()" class="dep-svg" preserveAspectRatio="xMidYMid meet">
+            <defs>
+                <!-- Glow filters per category -->
+                @for (cat of ['data', 'api', 'compute', 'communication', 'storage', 'analysis']; track cat) {
+                <filter [attr.id]="'glow-' + cat" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="4" result="blur" />
+                    <feFlood [attr.flood-color]="getCategoryColor($any(cat))" flood-opacity="0.4" />
+                    <feComposite in2="blur" operator="in" result="glow" />
+                    <feMerge>
+                        <feMergeNode in="glow" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+                }
+
+                <!-- Arrow marker -->
+                <marker id="dep-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <path d="M0,0 L8,3 L0,6" fill="var(--text-disabled)" opacity="0.5" />
+                </marker>
+            </defs>
+
+            <!-- Background grid -->
+            <g opacity="0.03">
+                @for (x of [0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480, 520, 560, 600]; track x) {
+                <line [attr.x1]="x" y1="0" [attr.x2]="x" [attr.y2]="height" stroke="var(--text-primary)"
+                    stroke-width="1" />
+                }
+                @for (y of [0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400]; track y) {
+                <line x1="0" [attr.y1]="y" [attr.x2]="width" [attr.y2]="y" stroke="var(--text-primary)"
+                    stroke-width="1" />
+                }
+            </g>
+
+            <!-- Edges -->
+            @for (edge of graphEdges(); track edge.source.id + '-' + edge.target.id) {
+            <path [attr.d]="edge.path" fill="none" stroke="var(--text-disabled)"
+                [attr.stroke-width]="getEdgeWidth(edge.coOccurrence)"
+                [attr.opacity]="getEdgeOpacity(edge.coOccurrence)" stroke-dasharray="4 3"
+                marker-end="url(#dep-arrow)">
+                <animate attributeName="stroke-dashoffset" from="0" to="-14" dur="1.5s" repeatCount="indefinite" />
+            </path>
+            }
+
+            <!-- Nodes -->
+            @for (node of graphNodes(); track node.id) {
+            <g [attr.transform]="'translate(' + node.x + ',' + node.y + ')'" class="graph-node"
+                (mouseenter)="onNodeHover(node)" (mouseleave)="onNodeHover(null)" style="cursor: pointer;">
+                <!-- Success rate ring -->
+                <circle [attr.r]="node.radius + 4" fill="none" stroke="var(--bg-surface)" stroke-width="2" />
+                <circle [attr.r]="node.radius + 4" fill="none" [attr.stroke]="getCategoryColor(node.category)"
+                    stroke-width="2" stroke-linecap="round"
+                    [attr.stroke-dasharray]="getSuccessRingCircumference(node)"
+                    [attr.stroke-dashoffset]="getSuccessRingOffset(node)" transform="rotate(-90)" opacity="0.6" />
+
+                <!-- Node circle -->
+                <circle [attr.r]="node.radius" [attr.fill]="getCategoryColor(node.category)" opacity="0.12"
+                    [attr.filter]="'url(#' + getNodeGlowFilter(node.category) + ')'" />
+                <circle [attr.r]="node.radius" fill="var(--bg-deep)" stroke-width="1.5"
+                    [attr.stroke]="getCategoryColor(node.category)" opacity="0.9" />
+
+                <!-- Category icon placeholder (circle center) -->
+                <text text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="600"
+                    [attr.fill]="getCategoryColor(node.category)" font-family="var(--font-mono)">
+                    {{ node.callCount }}
+                </text>
+
+                <!-- Label -->
+                <text [attr.y]="node.radius + 16" text-anchor="middle" font-size="10" font-weight="500"
+                    fill="var(--text-secondary)">
+                    {{ node.name }}
+                </text>
+            </g>
+            }
+        </svg>
+
+        <!-- Hover tooltip -->
+        @if (hoveredNode()) {
+        <div class="node-tooltip">
+            <div class="tooltip-header">
+                <span class="tooltip-name">{{ hoveredNode()!.name }}</span>
+                <span class="tooltip-category"
+                    [style.color]="getCategoryColor(hoveredNode()!.category)">{{ hoveredNode()!.category }}</span>
+            </div>
+            <div class="tooltip-stats">
+                <div class="tooltip-stat">
+                    <span class="ts-label">Calls</span>
+                    <span class="ts-value">{{ hoveredNode()!.callCount }}</span>
+                </div>
+                <div class="tooltip-stat">
+                    <span class="ts-label">Success</span>
+                    <span class="ts-value">{{ hoveredNode()!.successRate.toFixed(1) }}%</span>
+                </div>
+                <div class="tooltip-stat">
+                    <span class="ts-label">Latency</span>
+                    <span class="ts-value">{{ formatLatency(hoveredNode()!.avgLatency) }}</span>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>

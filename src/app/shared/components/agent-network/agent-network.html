@@ -1,0 +1,248 @@
+<div class="network-container" #container [class.no-header]="hideHeader">
+    <!-- Header -->
+    @if (!hideHeader) {
+    <div class="network-header">
+        <div class="header-left">
+            <div class="header-dot"></div>
+            <span class="header-title">Agent Hand-off</span>
+            <span class="header-badge">LIVE</span>
+        </div>
+        <div class="header-right">
+            <span class="status-label">Focus Mode</span>
+            <button class="icon-btn minimize" (click)="onMinimize()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </button>
+            <button class="icon-btn close" (click)="onClose()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Agent Status Summary -->
+    <div class="agent-status-bar">
+        <span class="status-text">Agent Status/Context</span>
+        <div class="status-counts">
+            <span class="count active">{{ activeCount() }} active</span>
+            <span class="count-sep">&middot;</span>
+            <span class="count processing">{{ processingCount() }} processing</span>
+            <span class="count-sep">&middot;</span>
+            <span class="count idle">{{ idleCount() }} idle</span>
+        </div>
+    </div>
+    }
+
+    <!-- SVG Canvas for Connections and Nodes -->
+    <svg class="network-svg" [attr.viewBox]="viewBox()" preserveAspectRatio="xMidYMid meet">
+        <defs>
+            <!-- Glow filters for each node type -->
+            <filter id="glow-cyan" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feFlood flood-color="#00e5ff" flood-opacity="0.5" />
+                <feComposite in2="blur" operator="in" />
+                <feMerge>
+                    <feMergeNode />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+
+            <filter id="glow-green" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feFlood flood-color="#00e676" flood-opacity="0.5" />
+                <feComposite in2="blur" operator="in" />
+                <feMerge>
+                    <feMergeNode />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+
+            <filter id="glow-purple" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feFlood flood-color="#b388ff" flood-opacity="0.5" />
+                <feComposite in2="blur" operator="in" />
+                <feMerge>
+                    <feMergeNode />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+
+            <filter id="glow-pink" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feFlood flood-color="#ff4081" flood-opacity="0.5" />
+                <feComposite in2="blur" operator="in" />
+                <feMerge>
+                    <feMergeNode />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+
+            <filter id="glow-orange" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feFlood flood-color="#ff9100" flood-opacity="0.5" />
+                <feComposite in2="blur" operator="in" />
+                <feMerge>
+                    <feMergeNode />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+
+            <filter id="glow-lightblue" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feFlood flood-color="#40c4ff" flood-opacity="0.5" />
+                <feComposite in2="blur" operator="in" />
+                <feMerge>
+                    <feMergeNode />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+
+            <filter id="glow-yellow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feFlood flood-color="#ffea00" flood-opacity="0.5" />
+                <feComposite in2="blur" operator="in" />
+                <feMerge>
+                    <feMergeNode />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+
+            <!-- Soft ambient glow for wave connections -->
+            <filter id="wave-glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+
+            <!-- Radial gradient fills for node backgrounds -->
+            @for (node of nodes(); track node.id) {
+            <radialGradient [id]="'node-bg-' + node.id" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" [attr.stop-color]="getNodeColor(node.type)" stop-opacity="0.25" />
+                <stop offset="100%" [attr.stop-color]="getNodeColor(node.type)" stop-opacity="0.08" />
+            </radialGradient>
+            }
+        </defs>
+
+        <!-- Background grid pattern -->
+        <g class="bg-grid" opacity="0.03">
+            @for (i of gridLines(); track i) {
+            <line [attr.x1]="i" y1="0" [attr.x2]="i" [attr.y2]="height" stroke="white" stroke-width="0.5" />
+            <line x1="0" [attr.y1]="i" [attr.x2]="width" [attr.y2]="i" stroke="white" stroke-width="0.5" />
+            }
+        </g>
+
+        <!-- Wave Connection Lines -->
+        <g class="connections">
+            @for (conn of connections(); track conn.id) {
+            <g class="connection" [class.active]="conn.active">
+                <!-- Base connection line (subtle) -->
+                <path [attr.d]="getConnectionPath(conn)" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.5"
+                    class="connection-base" />
+
+                <!-- Animated dashed wave line -->
+                @if (conn.active) {
+                <path [attr.d]="getConnectionPath(conn)" fill="none" [attr.stroke]="getConnectionColor(conn)"
+                    stroke-width="1.5" stroke-linecap="round" stroke-dasharray="8 6" stroke-opacity="0.5"
+                    filter="url(#wave-glow)" class="connection-wave" />
+
+                <!-- Flowing particles along the wave -->
+                @for (i of [0, 1, 2, 3]; track i) {
+                <circle r="2.5" [attr.fill]="getConnectionColor(conn)" [attr.opacity]="0.9 - i * 0.15"
+                    class="wave-particle">
+                    <animateMotion [attr.dur]="getParticleDuration(i)" repeatCount="indefinite"
+                        [attr.path]="getConnectionPath(conn)" [attr.begin]="getParticleDelay(i)" />
+                </circle>
+                <!-- Particle glow halo -->
+                <circle r="6" [attr.fill]="getConnectionColor(conn)" opacity="0.12" class="wave-particle-glow">
+                    <animateMotion [attr.dur]="getParticleDuration(i)" repeatCount="indefinite"
+                        [attr.path]="getConnectionPath(conn)" [attr.begin]="getParticleDelay(i)" />
+                </circle>
+                }
+                }
+            </g>
+            }
+        </g>
+
+        <!-- Nodes with layered glow effects (scaled by nodeScale) -->
+        <g class="nodes">
+            @for (node of nodes(); track node.id; let idx = $index) {
+            <g class="node" [class]="'node-' + node.type"
+                [attr.transform]="'translate(' + node.x + ',' + node.y + ')'" (click)="onNodeClick(node)"
+                (mouseenter)="onNodeHover(node, true)" (mouseleave)="onNodeHover(node, false)"
+                [style.animation-delay.ms]="idx * 80">
+
+                <!-- Layer 1: Outer ambient glow ring -->
+                <circle [attr.r]="r_ambient" fill="none" [attr.stroke]="getNodeColor(node.type)" stroke-width="0.5"
+                    stroke-opacity="0.15" class="outer-ambient" />
+
+                <!-- Layer 2: Pulse ring (active/processing only) -->
+                @if (node.status === 'processing' || node.status === 'active') {
+                <circle [attr.r]="r_pulse" fill="none" [attr.stroke]="getNodeColor(node.type)" stroke-width="1.5"
+                    class="pulse-ring">
+                    <animate attributeName="r" [attr.values]="r_pulse + ';' + r_pulseMax + ';' + r_pulse" dur="2.5s" repeatCount="indefinite" />
+                    <animate attributeName="stroke-opacity" values="0.35;0;0.35" dur="2.5s"
+                        repeatCount="indefinite" />
+                </circle>
+                }
+
+                <!-- Layer 3: Outer glow ring -->
+                <circle [attr.r]="r_outer" fill="none" [attr.stroke]="getNodeColor(node.type)" stroke-width="1"
+                    stroke-opacity="0.25" class="outer-ring" />
+
+                <!-- Layer 4: Main circle with gradient fill + glow filter -->
+                <circle [attr.r]="r_main" [attr.fill]="'url(#node-bg-' + node.id + ')'"
+                    [attr.stroke]="getNodeColor(node.type)" stroke-width="2"
+                    [attr.filter]="'url(#glow-' + getGlowType(node.type) + ')'" class="main-circle" />
+
+                <!-- Layer 5: Inner highlight ring -->
+                <circle [attr.r]="r_highlight" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"
+                    class="inner-highlight" />
+
+                <!-- Layer 6: Inner radial shine (top-left) -->
+                <circle [attr.r]="r_shine" [attr.cx]="shine_offset" [attr.cy]="shine_offset" fill="rgba(255,255,255,0.03)" class="inner-shine" />
+
+                <!-- Processing spinner ring -->
+                @if (node.status === 'processing') {
+                <circle [attr.r]="r_processing" fill="none" [attr.stroke]="getNodeColor(node.type)" stroke-width="2"
+                    stroke-linecap="round" stroke-dasharray="20 60" stroke-opacity="0.5"
+                    class="processing-ring" />
+                }
+
+                <!-- Status indicator dot -->
+                <circle [attr.cx]="status_cx" [attr.cy]="status_cy" [attr.r]="status_r" [attr.fill]="getStatusColor(node.status)"
+                    class="status-indicator">
+                    @if (node.status === 'active') {
+                    <animate attributeName="r" [attr.values]="(status_r - 1) + ';' + (status_r + 1) + ';' + (status_r - 1)" dur="2s" repeatCount="indefinite" />
+                    }
+                </circle>
+                <circle [attr.cx]="status_cx" [attr.cy]="status_cy" [attr.r]="status_glow_r" [attr.fill]="getStatusColor(node.status)" opacity="0.2"
+                    class="status-glow" />
+
+                <!-- Node icon (type-specific, scaled) -->
+                <g class="node-icon-group" [attr.transform]="'translate(' + icon_offset + ',' + icon_offset + ') scale(' + nodeScale + ')'">
+                    <path [attr.d]="getNodeIcon(node.type)" fill="none" [attr.stroke]="getNodeColor(node.type)"
+                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.85" />
+                </g>
+
+                <!-- Node label -->
+                <text [attr.y]="label_y" text-anchor="middle" class="node-label" [attr.fill]="getNodeColor(node.type)"
+                    [attr.font-size]="11 * nodeScale + 'px'">
+                    {{ node.name }}
+                </text>
+
+                <!-- Model label below -->
+                @if (node.model) {
+                <text [attr.y]="model_y" text-anchor="middle" class="node-model"
+                    [attr.font-size]="9 * nodeScale + 'px'">
+                    {{ node.model }}
+                </text>
+                }
+            </g>
+            }
+        </g>
+    </svg>
+</div>

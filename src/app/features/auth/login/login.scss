@@ -1,0 +1,431 @@
+// ============================================
+// Auth Pages — Shared Design System
+// Dark neon glassmorphism aesthetic
+// ============================================
+
+// ----- Layout -----
+
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-sans);
+}
+
+// ----- Animated Background -----
+
+.auth-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.orb {
+  position: absolute;
+  border-radius: var(--radius-full);
+  filter: blur(80px);
+  animation: orbFloat 10s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 480px;
+  height: 480px;
+  top: -140px;
+  left: -120px;
+  background: rgba(0, 229, 255, 0.07);
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 360px;
+  height: 360px;
+  bottom: -100px;
+  right: -100px;
+  background: rgba(179, 136, 255, 0.08);
+  animation-delay: 4s;
+}
+
+.orb-3 {
+  width: 220px;
+  height: 220px;
+  top: 45%;
+  left: 62%;
+  background: rgba(0, 230, 118, 0.05);
+  animation-delay: 7s;
+}
+
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 229, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 229, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  33%       { transform: translateY(-28px) scale(1.04); }
+  66%       { transform: translateY(14px) scale(0.97); }
+}
+
+// ----- Card -----
+
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  margin: var(--space-4);
+  padding: var(--space-8) var(--space-8);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-2xl);
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.5),
+    0 0 80px rgba(0, 229, 255, 0.05),
+    0 0 160px rgba(179, 136, 255, 0.04);
+  animation: cardSlideIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// ----- Brand -----
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.auth-logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--accent-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+  flex-shrink: 0;
+}
+
+.auth-brand {
+  font-family: var(--font-display, var(--font-sans));
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  letter-spacing: var(--tracking-wide);
+}
+
+.auth-brand-tag {
+  font-size: 9px;
+  font-weight: var(--font-bold);
+  color: var(--accent-primary);
+  background: rgba(0, 229, 255, 0.12);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 1px 5px;
+  letter-spacing: var(--tracking-widest);
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+// ----- Headings -----
+
+.auth-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-1) 0;
+  line-height: 1.2;
+}
+
+.auth-subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin: 0 0 var(--space-5) 0;
+}
+
+// ----- Demo Banner -----
+
+.demo-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: rgba(0, 230, 118, 0.07);
+  border: 1px solid rgba(0, 230, 118, 0.2);
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
+  color: var(--accent-success);
+  margin-bottom: var(--space-5);
+  font-weight: var(--font-medium);
+}
+
+.demo-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--accent-success);
+  flex-shrink: 0;
+  box-shadow: 0 0 6px var(--accent-success);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+// ----- Error -----
+
+.auth-error {
+  padding: var(--space-2-5) var(--space-3);
+  background: rgba(255, 82, 82, 0.08);
+  border: 1px solid rgba(255, 82, 82, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--accent-error);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-4);
+}
+
+// ----- Form -----
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: var(--space-4);
+}
+
+.form-label {
+  display: block;
+  font-size: 10px;
+  font-weight: var(--font-semibold);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-1-5);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-widest);
+}
+
+.form-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-1-5);
+
+  .form-label {
+    margin-bottom: 0;
+  }
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+}
+
+.form-input {
+  width: 100%;
+  padding: var(--space-2-5) var(--space-3) var(--space-2-5) 40px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-family: var(--font-sans);
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+  outline: none;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: var(--text-disabled);
+  }
+
+  &:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.12);
+  }
+}
+
+.input-toggle {
+  position: absolute;
+  right: var(--space-3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+  transition: color var(--transition-fast);
+  z-index: 1;
+
+  &:hover {
+    color: var(--text-secondary);
+  }
+}
+
+// ----- Checkbox / Remember -----
+
+.form-row {
+  margin-bottom: var(--space-5);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+
+  input[type='checkbox'] {
+    accent-color: var(--accent-primary);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+}
+
+// ----- Links -----
+
+.form-link {
+  font-size: var(--text-xs);
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: var(--font-medium);
+  transition: opacity var(--transition-fast);
+
+  &:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+  }
+}
+
+// ----- Primary Button -----
+
+.btn-primary {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--accent-primary);
+  color: var(--bg-deep);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  letter-spacing: var(--tracking-wide);
+
+  &:hover:not(:disabled) {
+    background: #33ecff;
+    box-shadow: 0 0 24px rgba(0, 229, 255, 0.35);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+// ----- Spinner -----
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(6, 12, 22, 0.25);
+  border-top-color: var(--bg-deep);
+  border-radius: var(--radius-full);
+  animation: spin 0.65s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ----- Footer links -----
+
+.auth-switch {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin: 0 0 var(--space-5) 0;
+
+  .form-link {
+    font-size: var(--text-sm);
+  }
+}
+
+.auth-divider {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-disabled);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--glass-border);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+}
+
+// ----- Responsive -----
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: var(--space-6) var(--space-5);
+    margin: var(--space-3);
+    border-radius: var(--radius-xl);
+  }
+}
+
+@media (max-width: 360px) {
+  .auth-orb {
+    display: none;
+  }
+
+  .demo-banner {
+    font-size: 10px;
+    flex-direction: column;
+    gap: 4px;
+  }
+}

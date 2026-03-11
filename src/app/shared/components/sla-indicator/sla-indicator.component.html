@@ -1,0 +1,53 @@
+<div class="sla-indicator" [style.border-left-color]="getStatusColor(compliance())">
+    <!-- Header -->
+    <div class="sla-header">
+        <div class="sla-name">
+            <span class="status-icon" [style.color]="getStatusColor(compliance())">
+                {{ getStatusIcon(compliance().status) }}
+            </span>
+            <span class="name">{{ compliance().slaName }}</span>
+        </div>
+        <span class="metric-type">{{ compliance().metricType }}</span>
+    </div>
+
+    <!-- Current vs Target -->
+    <div class="sla-metrics">
+        <div class="metric-row">
+            <span class="metric-label">Target:</span>
+            <span class="metric-value target">{{ formatValue(compliance().target, compliance().unit) }}</span>
+        </div>
+        <div class="metric-row">
+            <span class="metric-label">Actual:</span>
+            <span class="metric-value actual" [style.color]="getStatusColor(compliance())">
+                {{ formatValue(compliance().actual, compliance().unit) }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar-container">
+        <div class="progress-bar-track">
+            <div class="progress-bar-fill" [style.width.%]="Math.min(100, compliance().percentage)"
+                [style.background-color]="getStatusColor(compliance())">
+            </div>
+        </div>
+        <span class="progress-percentage" [style.color]="getStatusColor(compliance())">
+            {{ compliance().percentage.toFixed(1) }}%
+        </span>
+    </div>
+
+    <!-- Footer -->
+    <div class="sla-footer">
+        <div class="violations">
+            @if (compliance().violationCount > 0) {
+            <span class="violation-badge">{{ compliance().violationCount }} breaches</span>
+            } @else {
+            <span class="compliant-badge">✓ Compliant</span>
+            }
+        </div>
+        <div class="trend">
+            <span class="trend-icon">{{ getTrendIcon(compliance().trend) }}</span>
+            <span class="trend-label">{{ compliance().trend }}</span>
+        </div>
+    </div>
+</div>

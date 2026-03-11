@@ -1,0 +1,62 @@
+<div class="upgrade-wrapper">
+  <!-- Ambient background orbs -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <div class="upgrade-card">
+
+    <!-- Lock badge -->
+    <div class="lock-badge">
+      <div class="lock-ring">
+        <lucide-icon [img]="lockIcon" [size]="28" color="currentColor" />
+      </div>
+    </div>
+
+    <!-- Hero text -->
+    <div class="upgrade-hero">
+      <span class="pro-tag">
+        <lucide-icon [img]="zapIcon" [size]="11" color="currentColor" />
+        PRO FEATURE
+      </span>
+      <h1 class="feature-title">{{ featureName() }}</h1>
+      <p class="feature-desc">{{ featureDescription() }}</p>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+    <!-- Pro features list -->
+    <div class="features-section">
+      <p class="features-heading">Everything included in AgentOps Pro</p>
+      <div class="features-grid">
+        @for (feature of proFeatures; track feature) {
+        <div class="feature-item">
+          <span class="check-icon">
+            <lucide-icon [img]="checkIcon" [size]="12" color="currentColor" />
+          </span>
+          <span>{{ feature }}</span>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- CTA buttons -->
+    <div class="cta-group">
+      <a [href]="purchaseUrl" target="_blank" rel="noopener noreferrer" class="btn-upgrade">
+        <lucide-icon [img]="starIcon" [size]="16" color="currentColor" />
+        Get AgentOps Pro
+      </a>
+      <a routerLink="/dashboard-v1" class="btn-back">
+        <lucide-icon [img]="arrowLeftIcon" [size]="16" color="currentColor" />
+        Back to Dashboard
+      </a>
+    </div>
+
+    <!-- Social proof -->
+    <p class="social-proof">
+      Trusted by AI engineering teams building production-grade agent systems
+    </p>
+
+  </div>
+</div>

@@ -1,0 +1,18 @@
+@if (criticalAlert(); as alert) {
+  @if (!dismissed()) {
+    <div class="alert-banner" [style.border-left-color]="getSeverityColor(alert.severity)"
+      [style.background]="'rgba(' + (alert.severity === 'critical' ? '239,68,68' : alert.severity === 'warning' ? '245,158,11' : '0,212,255') + ',0.06)'">
+      <div class="banner-content">
+        <span class="severity-icon" [style.color]="getSeverityColor(alert.severity)">
+          {{ alert.severity === 'critical' ? '\u26A0' : alert.severity === 'warning' ? '\u25B2' : '\u24D8' }}
+        </span>
+        <span class="banner-title">{{ alert.title }}</span>
+        <span class="banner-message">{{ alert.message }}</span>
+      </div>
+      <div class="banner-actions">
+        <button class="ack-btn" (click)="acknowledge()">Acknowledge</button>
+        <button class="dismiss-btn" (click)="dismiss()">&times;</button>
+      </div>
+    </div>
+  }
+}

@@ -1,0 +1,66 @@
+AgentOps Lite — Regular & Extended License
+
+Copyright (c) 2026 AgentOps Lite. All rights reserved.
+
+================================================================================
+REGULAR LICENSE
+================================================================================
+
+The Regular License grants you (the Buyer) a non-exclusive, non-transferable
+right to use this item (AgentOps Lite) for a SINGLE end product, for yourself
+or for one client, and that end product may NOT be sold or redistributed.
+
+An end product is one that incorporates this item as well as other things, so
+that it is larger in scope and different in nature than this item.
+
+ALLOWED UNDER REGULAR LICENSE:
+- Use in a single web application or SaaS product for yourself or one client
+- Customize and modify the source code for your use case
+- Use on a single domain / subdomain
+
+NOT ALLOWED UNDER REGULAR LICENSE:
+- Reselling or redistributing the item or its source code
+- Creating multiple end products with a single license
+- Sharing the item with people outside your organization
+
+================================================================================
+EXTENDED LICENSE
+================================================================================
+
+The Extended License grants you (the Buyer) a non-exclusive, non-transferable
+right to use this item in MULTIPLE end products, for yourself or for multiple
+clients, and those end products may be sold to end users.
+
+ALLOWED UNDER EXTENDED LICENSE:
+- Use in unlimited end products (web apps, SaaS platforms, internal tools)
+- Customize and modify the source code
+- Incorporate into products that are sold to end users
+- Use on multiple domains
+
+NOT ALLOWED UNDER EITHER LICENSE:
+- Redistributing the original template files or source code for download
+- Creating a competing template / theme product
+- Claiming authorship of the original template design or code
+
+================================================================================
+THIRD-PARTY OPEN SOURCE LIBRARIES
+================================================================================
+
+This template uses the following open-source libraries, each governed by their
+own licenses (all permissive):
+
+- Angular (MIT) — https://angular.dev
+- RxJS (Apache 2.0) — https://rxjs.dev
+- Tailwind CSS (MIT) — https://tailwindcss.com
+- Lucide Icons (ISC) — https://lucide.dev
+- D3.js (ISC) — https://d3js.org
+- Chart.js (MIT) — https://chartjs.org
+- ngx-charts (MIT) — https://swimlane.github.io/ngx-charts
+- TypeScript (Apache 2.0) — https://typescriptlang.org
+
+================================================================================
+
+THE ITEM IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE
+FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OF THE ITEM.

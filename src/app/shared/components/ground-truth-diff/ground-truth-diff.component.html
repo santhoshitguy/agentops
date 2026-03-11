@@ -1,0 +1,54 @@
+<div class="ground-truth-diff">
+    @if (!hasComparison) {
+    <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+        </svg>
+        <p>Select a hallucination to view the ground truth comparison</p>
+    </div>
+    } @else {
+    <div class="diff-container">
+        <header class="diff-header">
+            <h3 class="text-white font-display font-semibold">Ground Truth Comparison</h3>
+            <button (click)="markAsFalsePositive()" class="btn btn-ghost btn-sm">
+                Mark as False Positive
+            </button>
+        </header>
+
+        <div class="diff-panels">
+            <!-- Agent Output (What was claimed) -->
+            <div class="diff-panel removed">
+                <div class="panel-label">
+                    <span class="label-icon">✗</span>
+                    <span>Agent Output (Incorrect)</span>
+                </div>
+                <div class="panel-content">
+                    <code class="text-neon-red">{{ comparison()!.agentOutput }}</code>
+                </div>
+            </div>
+
+            <!-- Ground Truth (What should have been) -->
+            <div class="diff-panel added">
+                <div class="panel-label">
+                    <span class="label-icon">✓</span>
+                    <span>Ground Truth (Correct)</span>
+                </div>
+                <div class="panel-content">
+                    <code class="text-neon-green">{{ comparison()!.expectedOutput }}</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verification Status -->
+        <div class="verification-status">
+            <span class="status-badge" [class]="comparison()!.verificationStatus">
+                {{ comparison()!.verificationStatus | titlecase }}
+            </span>
+        </div>
+    </div>
+    }
+</div>

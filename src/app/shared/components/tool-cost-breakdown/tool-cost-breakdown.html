@@ -1,0 +1,123 @@
+<div class="cost-panel">
+    <div class="cost-header">
+        <div class="header-title">
+            <lucide-icon [img]="dollarIcon" [size]="16" color="var(--accent-yellow)" />
+            <span>Cost Breakdown by Tool</span>
+        </div>
+        <div class="total-cost">
+            <span class="total-value">{{ formatCost(totalCost()) }}</span>
+            <span class="total-label">total</span>
+        </div>
+    </div>
+
+    <!-- Sort Controls -->
+    <div class="sort-bar">
+        <span class="sort-label">Sort by</span>
+        @for (opt of [
+            { key: 'cost', label: 'Cost' },
+            { key: 'calls', label: 'Calls' },
+            { key: 'latency', label: 'Latency' },
+            { key: 'errors', label: 'Error Rate' }
+        ]; track opt.key) {
+        <button class="sort-btn" [class.active]="sortBy() === opt.key" (click)="setSort($any(opt.key))">
+            {{ opt.label }}
+        </button>
+        }
+    </div>
+
+    <!-- Tool Rows -->
+    <div class="cost-body">
+        @for (row of sortedRows(); track row.tool.toolId; let i = $index) {
+        <div class="tool-row" [class.expanded]="expandedTool() === row.tool.toolId"
+            (click)="toggleExpand(row.tool.toolId)">
+            <div class="row-main">
+                <div class="row-rank">{{ i + 1 }}</div>
+                <div class="row-category-dot" [style.background]="getCategoryColor(row.tool.category)"></div>
+                <div class="row-info">
+                    <span class="row-name">{{ row.tool.toolName }}</span>
+                    <span class="row-category">{{ row.tool.category }}</span>
+                </div>
+
+                <!-- Cost bar -->
+                <div class="row-cost-bar">
+                    <div class="cost-bar-track">
+                        <div class="cost-bar-fill" [style.width.%]="row.costPercent"
+                            [style.background]="getCategoryColor(row.tool.category)">
+                        </div>
+                    </div>
+                    <span class="cost-bar-value">{{ formatCost(row.tool.totalCost) }}</span>
+                </div>
+
+                <!-- Call count -->
+                <div class="row-calls">
+                    <span class="calls-value">{{ row.tool.callCount }}</span>
+                    <span class="calls-label">calls</span>
+                </div>
+
+                <!-- Latency -->
+                <div class="row-latency">
+                    <div class="latency-bar-track">
+                        <div class="latency-bar-fill" [style.width.%]="row.latencyBar"></div>
+                    </div>
+                    <span class="latency-value">{{ formatLatency(row.tool.averageLatency) }}</span>
+                </div>
+
+                <!-- Success rate -->
+                <div class="row-reliability">
+                    <span class="reliability-value" [style.color]="row.reliabilityColor">
+                        {{ row.tool.successRate.toFixed(1) }}%
+                    </span>
+                </div>
+            </div>
+
+            <!-- Expanded details -->
+            @if (expandedTool() === row.tool.toolId) {
+            <div class="row-details">
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Cost/Call</span>
+                        <span class="detail-value">{{ formatCost(row.tool.costPerCall) }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">P95 Latency</span>
+                        <span class="detail-value">{{ formatLatency(row.tool.p95Latency) }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Max Latency</span>
+                        <span class="detail-value">{{ formatLatency(row.tool.maxLatency) }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Failures</span>
+                        <span class="detail-value" style="color: var(--accent-red)">{{ row.tool.failureCount }}</span>
+                    </div>
+                </div>
+
+                @if (row.tool.errorTypes && (row.tool.errorTypes | keyvalue).length > 0) {
+                <div class="error-breakdown">
+                    <span class="error-title">Error Types</span>
+                    @for (err of row.tool.errorTypes | keyvalue; track err.key) {
+                    <div class="error-row">
+                        <span class="error-type">{{ err.key }}</span>
+                        <span class="error-count">{{ err.value }}</span>
+                    </div>
+                    }
+                </div>
+                }
+
+                @if (row.tool.agentUsage) {
+                <div class="agent-breakdown">
+                    <span class="agent-title">Agent Usage</span>
+                    @for (agent of row.tool.agentUsage | keyvalue; track agent.key) {
+                    <div class="agent-row">
+                        <span class="agent-name">{{ agent.key }}</span>
+                        <span class="agent-count">{{ agent.value }} calls</span>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+            }
+        </div>
+        }
+    </div>
+</div>

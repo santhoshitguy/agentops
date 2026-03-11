@@ -1,0 +1,20 @@
+<div class="confidence-gauge" [style.width.px]="size()" [style.height.px]="size()">
+    <svg [attr.viewBox]="'0 0 ' + size() + ' ' + size()" class="gauge-svg">
+        <!-- Background circle -->
+        <circle class="gauge-bg" [attr.cx]="size() / 2" [attr.cy]="size() / 2" r="45" fill="none"
+            stroke="var(--bg-elevated)" stroke-width="8" />
+
+        <!-- Progress circle -->
+        <circle class="gauge-progress" [attr.cx]="size() / 2" [attr.cy]="size() / 2" r="45" fill="none"
+            [attr.stroke]="gaugeColor" stroke-width="8" stroke-linecap="round" [attr.stroke-dasharray]="strokeDasharray"
+            [attr.stroke-dashoffset]="strokeDashoffset" [style.filter]="'drop-shadow(0 0 8px ' + gaugeColor + ')'" />
+
+        <!-- Center text -->
+        <text [attr.x]="size() / 2" [attr.y]="size() / 2" text-anchor="middle" dominant-baseline="middle"
+            class="gauge-text" [style.fill]="gaugeColor">
+            {{ confidencePercent }}%
+        </text>
+    </svg>
+
+    <div class="gauge-label">{{ label() }}</div>
+</div>

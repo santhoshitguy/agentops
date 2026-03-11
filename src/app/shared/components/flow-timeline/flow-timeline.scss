@@ -1,0 +1,314 @@
+:host {
+    display: block;
+    height: 100%;
+    min-height: 0;
+}
+
+.flow-timeline-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+// ---- Header ----
+.timeline-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-2-5) var(--space-3);
+    border-bottom: 1px solid var(--glass-border);
+    flex-shrink: 0;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1-5);
+
+    span {
+        font-size: var(--text-sm);
+        font-weight: var(--font-semibold);
+        color: var(--text-primary);
+    }
+}
+
+.step-count {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+}
+
+// ---- Body ----
+.timeline-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--space-2) var(--space-3);
+
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: var(--glass-border);
+        border-radius: var(--radius-full);
+    }
+}
+
+// ---- Step ----
+.timeline-step {
+    display: flex;
+    gap: var(--space-2-5);
+    padding: var(--space-2) 0;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    position: relative;
+
+    &:hover {
+        .step-content {
+            background: var(--bg-surface);
+        }
+    }
+
+    &.active {
+        .step-content {
+            background: color-mix(in srgb, var(--accent-cyan) 6%, transparent);
+            border-color: var(--glass-border-light);
+        }
+    }
+}
+
+// ---- Connector ----
+.step-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 20px;
+    flex-shrink: 0;
+    padding-top: 4px;
+}
+
+.connector-line {
+    width: 2px;
+    flex: 1;
+    opacity: 0.2;
+    margin-top: 4px;
+}
+
+.connector-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.dot-pulse {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent-cyan);
+    opacity: 0;
+    animation: dotPulse 2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+    0%, 100% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+// ---- Step Content ----
+.step-content {
+    flex: 1;
+    min-width: 0;
+    padding: var(--space-2);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    transition: all 0.15s ease;
+}
+
+.step-header-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-1);
+}
+
+.step-type-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.step-number {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+}
+
+.step-meta-inline {
+    display: flex;
+    gap: var(--space-2);
+    margin-left: auto;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-disabled);
+}
+
+.step-action {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin-bottom: var(--space-1);
+}
+
+// ---- Confidence ----
+.step-confidence {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1-5);
+    margin-bottom: var(--space-1);
+}
+
+.confidence-track {
+    flex: 1;
+    height: 3px;
+    background: var(--bg-surface);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.confidence-fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 0.4s ease;
+    opacity: 0.7;
+}
+
+.confidence-label {
+    font-size: 9px;
+    font-family: var(--font-mono);
+    color: var(--text-disabled);
+    flex-shrink: 0;
+}
+
+// ---- Loop Badge ----
+.step-loop-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: color-mix(in srgb, var(--accent-orange) 10%, transparent);
+    border-radius: var(--radius-full);
+    font-size: 9px;
+    color: var(--accent-orange);
+    margin-bottom: var(--space-1);
+}
+
+// ---- Expanded Details ----
+.step-details {
+    margin-top: var(--space-2);
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--glass-border);
+}
+
+.detail-section {
+    margin-bottom: var(--space-2);
+
+    &:last-of-type {
+        margin-bottom: var(--space-1-5);
+    }
+}
+
+.detail-label {
+    display: block;
+    font-size: 9px;
+    font-weight: var(--font-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: var(--space-1);
+}
+
+.detail-text {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.detail-tool {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--bg-surface);
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--accent-green);
+}
+
+.detail-args {
+    margin: var(--space-1) 0 0;
+    padding: var(--space-1-5);
+    background: var(--bg-deep);
+    border-radius: var(--radius-sm);
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 100px;
+}
+
+.detail-result {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    line-height: 1.5;
+    padding: var(--space-1-5);
+    background: var(--bg-surface);
+    border-radius: var(--radius-sm);
+    margin: 0;
+    font-family: var(--font-mono);
+}
+
+.detail-footer {
+    display: flex;
+    gap: var(--space-3);
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-disabled);
+
+    span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+}
+
+// ---- Empty ----
+.empty-timeline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+
+    span {
+        font-size: var(--text-sm);
+        color: var(--text-muted);
+    }
+}

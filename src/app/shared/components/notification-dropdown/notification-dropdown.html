@@ -1,0 +1,50 @@
+<div class="notification-wrapper">
+  <button class="notification-btn" (click)="toggle()">
+    <lucide-icon [img]="bellIcon" [size]="18" color="currentColor"></lucide-icon>
+    @if (unreadCount() > 0) {
+      <span class="notification-badge">{{ unreadCount() > 9 ? '9+' : unreadCount() }}</span>
+    }
+  </button>
+
+  @if (isOpen()) {
+    <div class="notification-panel">
+      <div class="panel-header">
+        <span class="panel-title">Notifications</span>
+        @if (unreadCount() > 0) {
+          <button class="mark-all-btn" (click)="acknowledgeAll()">Mark all read</button>
+        }
+      </div>
+
+      <div class="alert-list">
+        @for (alert of recentAlerts(); track alert.id) {
+          <div class="alert-item"
+            [class.unread]="!alert.acknowledged"
+            [class.navigable]="isNavigable(alert)"
+            (click)="handleAlertClick(alert)">
+            <span class="severity-dot" [style.background]="getSeverityColor(alert.severity)"></span>
+            <div class="alert-content">
+              <div class="alert-top">
+                <span class="alert-title">{{ alert.title }}</span>
+                <div class="alert-top-right">
+                  <span class="alert-time">{{ alert.timestamp | relativeTime }}</span>
+                  @if (isNavigable(alert)) {
+                    <span class="nav-arrow" title="Click to view details">›</span>
+                  }
+                </div>
+              </div>
+              <span class="alert-message">{{ alert.message }}</span>
+              <span class="alert-type-badge">{{ alert.type | titlecase }}</span>
+            </div>
+          </div>
+        }
+        @if (recentAlerts().length === 0) {
+          <div class="empty-alerts">No notifications</div>
+        }
+      </div>
+
+      <div class="panel-footer">
+        <a class="view-all-link" routerLink="/alert-history" (click)="close()">View All Alerts</a>
+      </div>
+    </div>
+  }
+</div>

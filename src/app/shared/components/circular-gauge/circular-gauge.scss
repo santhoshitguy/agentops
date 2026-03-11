@@ -1,0 +1,121 @@
+.gauge-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gauge-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.gauge-track {
+    opacity: 0.15;
+}
+
+.gauge-value {
+    transition: stroke-dashoffset 1s ease-out;
+}
+
+.gauge-tick {
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+
+    &.major {
+        opacity: 0.8;
+    }
+}
+
+.gauge-center {
+    transition: fill 0.3s ease;
+}
+
+.gauge-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+}
+
+.gauge-value-display {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.value {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: var(--font-bold);
+    line-height: 1;
+    background: linear-gradient(135deg, currentColor, var(--text-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.unit {
+    font-size: 0.875rem;
+    font-weight: var(--font-medium);
+    color: var(--text-tertiary);
+}
+
+.gauge-label {
+    font-size: 0.875rem;
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin-top: 0.25rem;
+}
+
+.gauge-sublabel {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.125rem;
+}
+
+/* Size variants */
+:host-context(.gauge-sm) {
+    .value {
+        font-size: 1.25rem;
+    }
+
+    .gauge-label {
+        font-size: 0.75rem;
+    }
+}
+
+:host-context(.gauge-lg) {
+    .value {
+        font-size: 3rem;
+    }
+
+    .gauge-label {
+        font-size: 1rem;
+    }
+}
+
+/* Animation */
+@keyframes gauge-pulse {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 8px currentColor);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 16px currentColor);
+    }
+}
+
+.gauge-value {
+    animation: gauge-pulse 2s ease-in-out infinite;
+}

@@ -1,0 +1,132 @@
+// ── Desktop: fixed-height 3-column layout (all panels side by side) ──────────
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.main-content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: var(--left-panel-width) 1fr var(--right-panel-width);
+    grid-template-rows: 1fr;
+    grid-template-areas: "left center right";
+    gap: var(--space-3);
+    padding: var(--space-3);
+    min-height: 0;
+    overflow: hidden;
+}
+
+.left-panel {
+    grid-area: left;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.center-panel {
+    grid-area: center;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.right-panel {
+    grid-area: right;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.terminal-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--terminal-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+// ── Large desktops: slightly compact panels ───────────────────────────────────
+@media (max-width: 1400px) {
+    .main-content {
+        grid-template-columns: 190px 1fr 290px;
+    }
+}
+
+@media (max-width: 1280px) {
+    .main-content {
+        grid-template-columns: 170px 1fr 250px;
+    }
+}
+
+// ── Tablet landscape / small laptop: 2-row layout ────────────────────────────
+// Row 1: center (full width) | Row 2: left + right side by side
+@media (max-width: 1023px) {
+    .dashboard {
+        overflow: auto;
+    }
+
+    .main-content {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        grid-template-areas:
+            "center center"
+            "left   right";
+        overflow: visible;
+        height: auto;
+        min-height: unset;
+    }
+
+    .center-panel {
+        min-height: 420px;
+        overflow: hidden;
+    }
+
+    .left-panel {
+        min-height: 340px;
+        overflow-y: auto;
+    }
+
+    .right-panel {
+        min-height: 340px;
+        overflow: hidden;
+    }
+
+    .terminal-wrapper {
+        min-height: 320px;
+    }
+}
+
+// ── Mobile portrait: all 3 panels stacked vertically ─────────────────────────
+@media (max-width: 640px) {
+    .main-content {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "center"
+            "left"
+            "right";
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .center-panel {
+        min-height: 360px;
+    }
+
+    .left-panel {
+        min-height: 300px;
+    }
+
+    .right-panel {
+        min-height: 280px;
+    }
+
+    .terminal-wrapper {
+        min-height: 260px;
+    }
+}

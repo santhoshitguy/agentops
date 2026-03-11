@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Angular Dev Server",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["start"],
+      "port": 4200
+    },
+    {
+      "name": "Mock Server",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "mock-server"],
+      "port": 3001
+    },
+    {
+      "name": "Mock Server (Dev/Watch)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "mock-server:dev"],
+      "port": 3001
+    }
+  ]
+}

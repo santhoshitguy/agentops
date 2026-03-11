@@ -1,0 +1,104 @@
+<div class="auth-page">
+  <!-- Animated neon background -->
+  <div class="auth-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Glassmorphism card -->
+  <div class="auth-card" [class.card-verified]="isVerified()">
+
+    <!-- Brand Logo -->
+    <div class="auth-logo">
+      <div class="auth-logo-icon" [class.logo-verified]="isVerified()">
+        @if (isVerified()) {
+          <lucide-icon [img]="checkIcon" [size]="22" color="var(--bg-deep)" />
+        } @else {
+          <lucide-icon [img]="shieldIcon" [size]="22" color="var(--bg-deep)" />
+        }
+      </div>
+      <span class="auth-brand">AgentOps</span>
+      <span class="auth-brand-tag">2FA</span>
+    </div>
+
+    @if (isVerified()) {
+      <!-- Success state -->
+      <div class="verified-state">
+        <div class="verified-icon">
+          <lucide-icon [img]="checkIcon" [size]="48" color="var(--accent-success)" />
+        </div>
+        <h1 class="auth-title">Verified!</h1>
+        <p class="auth-subtitle">Redirecting to your dashboard...</p>
+        <div class="verified-bar"></div>
+      </div>
+    } @else {
+      <!-- MFA form -->
+      <h1 class="auth-title">Two-Factor Auth</h1>
+      <p class="auth-subtitle">Enter the 6-digit code sent to your device</p>
+
+      <div class="demo-banner">
+        <span class="demo-dot"></span>
+        Demo mode — enter any 6 digits to continue
+      </div>
+
+      <!-- Error -->
+      @if (errorMessage()) {
+        <div class="auth-error">{{ errorMessage() }}</div>
+      }
+
+      <!-- OTP Digit Boxes -->
+      <div class="otp-container" (paste)="onPaste($event)">
+        @for (i of digitIndices; track i) {
+          <input
+            #otpInput
+            type="text"
+            inputmode="numeric"
+            maxlength="1"
+            class="otp-input"
+            [class.otp-filled]="getDigitValue(i) !== ''"
+            [class.otp-loading]="isLoading()"
+            [value]="getDigitValue(i)"
+            (input)="onDigitInput(i, $event)"
+            (keydown)="onDigitKeydown(i, $event)"
+            (focus)="onDigitFocus(i, $event)"
+            [attr.aria-label]="'Digit ' + (i + 1) + ' of 6'"
+            [disabled]="isLoading()"
+          />
+        }
+      </div>
+
+      <!-- Loading indicator -->
+      @if (isLoading()) {
+        <div class="mfa-verifying">
+          <span class="spinner"></span>
+          <span>Verifying code...</span>
+        </div>
+      }
+
+      <!-- Timer / Resend -->
+      <div class="mfa-timer">
+        @if (!canResend()) {
+          <p class="timer-text">
+            Code expires in
+            <span class="timer-count">{{ timerDisplay() }}</span>
+          </p>
+        } @else {
+          <button class="resend-btn" (click)="resendCode()">
+            <lucide-icon [img]="refreshIcon" [size]="14" color="currentColor" />
+            Resend verification code
+          </button>
+        }
+      </div>
+
+      <!-- Back to login -->
+      <div class="mfa-footer">
+        <a routerLink="/auth/login" class="back-link">
+          <lucide-icon [img]="arrowLeftIcon" [size]="14" color="currentColor" />
+          Back to Sign In
+        </a>
+      </div>
+    }
+
+  </div>
+</div>

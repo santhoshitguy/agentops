@@ -1,0 +1,59 @@
+:host {
+    display: inline-block;
+    cursor: pointer;
+}
+
+svg {
+    overflow: visible;
+    transition: transform 0.2s ease;
+}
+
+svg:hover {
+    transform: scale(1.05);
+}
+
+.node-bg {
+    transition: all 0.3s ease;
+}
+
+.pulse-ring {
+    animation: pulse-expand 2s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.progress-ring {
+    animation: rotate-ring 2s linear infinite;
+    transform-origin: center;
+}
+
+.status-dot {
+    filter: drop-shadow(0 0 4px currentColor);
+}
+
+@keyframes pulse-expand {
+
+    0%,
+    100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0;
+        transform: scale(1.3);
+    }
+}
+
+@keyframes rotate-ring {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.node-hovered .node-bg {
+    filter: brightness(1.2);
+}

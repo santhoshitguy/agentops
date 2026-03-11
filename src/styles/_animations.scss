@@ -1,0 +1,593 @@
+// ============================================
+// AgentOps Pro - Advanced Animations
+// Wave Flows, Particles, SVG Animations
+// ============================================
+
+// ==========================================
+// WAVE CONNECTION ANIMATIONS
+// ==========================================
+
+/// Wave path animation - flows particles along a path
+@keyframes wave-particle-flow {
+    0% {
+        offset-distance: 0%;
+        opacity: 0;
+    }
+
+    5% {
+        opacity: 1;
+    }
+
+    95% {
+        opacity: 1;
+    }
+
+    100% {
+        offset-distance: 100%;
+        opacity: 0;
+    }
+}
+
+/// Dashed line animation for connections
+@keyframes dash-flow {
+    to {
+        stroke-dashoffset: -24;
+    }
+}
+
+/// Energy pulse along path
+@keyframes energy-pulse {
+    0% {
+        stroke-opacity: 0.2;
+        stroke-width: 1;
+    }
+
+    50% {
+        stroke-opacity: 1;
+        stroke-width: 3;
+    }
+
+    100% {
+        stroke-opacity: 0.2;
+        stroke-width: 1;
+    }
+}
+
+/// Gradient shift for wave paths
+@keyframes gradient-shift {
+    0% {
+        stop-color: var(--accent-primary);
+    }
+
+    33% {
+        stop-color: var(--accent-secondary);
+    }
+
+    66% {
+        stop-color: var(--accent-tertiary);
+    }
+
+    100% {
+        stop-color: var(--accent-primary);
+    }
+}
+
+// ==========================================
+// CIRCULAR GAUGE ANIMATIONS
+// ==========================================
+
+/// Gauge fill animation
+@keyframes gauge-fill {
+    from {
+        stroke-dashoffset: 283; // 2 * PI * 45 (radius)
+    }
+}
+
+/// Gauge tick appearance
+@keyframes tick-appear {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/// Gauge value counter
+@keyframes count-up {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/// Gauge glow pulse
+@keyframes gauge-glow {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 4px currentColor);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 12px currentColor) drop-shadow(0 0 24px currentColor);
+    }
+}
+
+// ==========================================
+// NODE ANIMATIONS
+// ==========================================
+
+/// Node entrance animation
+@keyframes node-enter {
+    0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.1) rotate(10deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0);
+        opacity: 1;
+    }
+}
+
+/// Node hover expansion
+@keyframes node-expand {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+
+    100% {
+        transform: scale(1.05);
+    }
+}
+
+/// Node processing indicator
+@keyframes node-processing {
+    0% {
+        stroke-dashoffset: 0;
+    }
+
+    100% {
+        stroke-dashoffset: 100;
+    }
+}
+
+/// Node ring pulse
+@keyframes ring-pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+/// Orbital rotation
+@keyframes orbit {
+    from {
+        transform: rotate(0deg) translateX(60px) rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg) translateX(60px) rotate(-360deg);
+    }
+}
+
+// ==========================================
+// PARTICLE EFFECTS
+// ==========================================
+
+/// Particle spawn and fade
+@keyframes particle-spawn {
+    0% {
+        transform: translate(0, 0) scale(0);
+        opacity: 0;
+    }
+
+    20% {
+        transform: translate(var(--tx, 10px), var(--ty, -10px)) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(calc(var(--tx, 10px) * 3), calc(var(--ty, -10px) * 3)) scale(0);
+        opacity: 0;
+    }
+}
+
+/// Particle drift
+@keyframes particle-drift {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    25% {
+        transform: translate(var(--drift-x, 5px), var(--drift-y, -8px));
+    }
+
+    50% {
+        transform: translate(calc(var(--drift-x, 5px) * 1.5), 0);
+    }
+
+    75% {
+        transform: translate(var(--drift-x, 5px), var(--drift-y, 8px));
+    }
+}
+
+/// Sparkle effect
+@keyframes sparkle {
+
+    0%,
+    100% {
+        transform: scale(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1) rotate(180deg);
+        opacity: 1;
+    }
+}
+
+// ==========================================
+// TERMINAL ANIMATIONS
+// ==========================================
+
+/// Cursor blink
+@keyframes cursor-blink {
+
+    0%,
+    50% {
+        opacity: 1;
+    }
+
+    51%,
+    100% {
+        opacity: 0;
+    }
+}
+
+/// Text typing effect
+@keyframes typing {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+/// Log entry slide in
+@keyframes log-enter {
+    from {
+        transform: translateX(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/// Scan line sweep
+@keyframes scan-sweep {
+    0% {
+        top: 0;
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0.5;
+    }
+}
+
+// ==========================================
+// UI ELEMENT ANIMATIONS
+// ==========================================
+
+/// Sidebar item hover
+@keyframes sidebar-item-glow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
+/// Card reveal
+@keyframes card-reveal {
+    0% {
+        transform: translateY(30px) scale(0.95);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/// Notification slide
+@keyframes notification-slide {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    10% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    90% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/// Progress bar fill
+@keyframes progress-fill {
+    from {
+        transform: scaleX(0);
+        transform-origin: left;
+    }
+
+    to {
+        transform: scaleX(1);
+        transform-origin: left;
+    }
+}
+
+/// Tooltip appear
+@keyframes tooltip-appear {
+    0% {
+        transform: translateY(5px) scale(0.95);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+// ==========================================
+// LOADING ANIMATIONS
+// ==========================================
+
+/// Spinner rotation
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/// Dots loading
+@keyframes dots-loading {
+
+    0%,
+    80%,
+    100% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/// Skeleton shimmer
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/// AI thinking dots
+@keyframes ai-thinking {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+    }
+
+    30% {
+        transform: translateY(-8px);
+    }
+}
+
+// ==========================================
+// SPECIAL EFFECTS
+// ==========================================
+
+/// Holographic shimmer
+@keyframes holographic {
+    0% {
+        background-position: 0% 50%;
+        filter: hue-rotate(0deg);
+    }
+
+    50% {
+        background-position: 100% 50%;
+        filter: hue-rotate(30deg);
+    }
+
+    100% {
+        background-position: 0% 50%;
+        filter: hue-rotate(0deg);
+    }
+}
+
+/// Matrix rain effect
+@keyframes matrix-fall {
+    0% {
+        transform: translateY(-100%);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+}
+
+/// Electric arc
+@keyframes electric-arc {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        filter: blur(1px);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        opacity: 0.5;
+        filter: blur(0.5px);
+    }
+}
+
+/// Data transfer visualization
+@keyframes data-transfer {
+    0% {
+        transform: translateX(0) scaleX(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: translateX(50%) scaleX(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(100%) scaleX(0);
+        opacity: 0;
+    }
+}
+
+// ==========================================
+// ANIMATION UTILITY CLASSES
+// ==========================================
+
+.animate-glow-pulse {
+    animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-spin {
+    animation: spinner 1s linear infinite;
+}
+
+.animate-pulse {
+    animation: pulse-scale 2s ease-in-out infinite;
+}
+
+.animate-wave {
+    animation: wave-flow 2s linear infinite;
+}
+
+.animate-fade-in {
+    animation: card-reveal 0.5s ease-out forwards;
+}
+
+.animate-shimmer {
+    animation: skeleton-shimmer 2s linear infinite;
+    background: linear-gradient(90deg,
+            var(--bg-surface) 0%,
+            var(--bg-elevated) 50%,
+            var(--bg-surface) 100%);
+    background-size: 200% 100%;
+}
+
+// Animation delay utilities
+@for $i from 1 through 10 {
+    .delay-#{$i * 100} {
+        animation-delay: #{$i * 100}ms;
+    }
+}
+
+// Animation duration utilities
+.duration-fast {
+    animation-duration: var(--transition-fast);
+}
+
+.duration-normal {
+    animation-duration: var(--transition-normal);
+}
+
+.duration-slow {
+    animation-duration: var(--transition-slow);
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

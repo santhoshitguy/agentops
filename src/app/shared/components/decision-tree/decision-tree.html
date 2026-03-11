@@ -1,0 +1,202 @@
+<div class="decision-tree" [class.compact]="compactSignal()">
+  @if (nodes().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">&#x1F333;</span>
+      <span class="empty-text">No steps to display</span>
+    </div>
+  } @else {
+    <svg
+      [attr.viewBox]="viewBox()"
+      [attr.width]="'100%'"
+      [style.height.px]="svgHeight()"
+      class="tree-svg"
+      xmlns="http://www.w3.org/2000/svg">
+
+      <!-- Glow filter definitions -->
+      <defs>
+        <filter id="node-glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="4" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+        <filter id="highlight-glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="8" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      <!-- Connection paths -->
+      @for (conn of connections(); track $index) {
+        <path
+          [attr.d]="conn.d"
+          fill="none"
+          [attr.stroke]="conn.color"
+          stroke-width="2"
+          stroke-opacity="0.4"
+          stroke-dasharray="6 4"
+          class="connection-path" />
+      }
+
+      <!-- Nodes -->
+      @for (node of nodes(); track node.step.stepNumber) {
+        <g
+          class="tree-node"
+          [class.highlighted]="isHighlighted(node.step.stepNumber)"
+          [class.hovered]="isHovered(node.step.stepNumber)"
+          [class.status-active]="node.step.status === 'active'"
+          [class.status-pending]="node.step.status === 'pending' || node.step.status === 'skipped'"
+          (click)="onNodeClick(node.step.stepNumber)"
+          (mouseenter)="onNodeEnter(node.step.stepNumber)"
+          (mouseleave)="onNodeLeave()"
+          [attr.filter]="isHighlighted(node.step.stepNumber) ? 'url(#highlight-glow)' : (isHovered(node.step.stepNumber) ? 'url(#node-glow)' : null)">
+
+          <!-- Node background -->
+          <rect
+            [attr.x]="node.x"
+            [attr.y]="node.y"
+            [attr.width]="node.width"
+            [attr.height]="node.height"
+            rx="10"
+            ry="10"
+            fill="#0d1117"
+            [attr.stroke]="isHighlighted(node.step.stepNumber) ? node.color : node.statusColor"
+            [attr.stroke-width]="isHighlighted(node.step.stepNumber) ? 2 : 1"
+            stroke-opacity="0.6" />
+
+          <!-- Step number badge -->
+          <circle
+            [attr.cx]="node.x + 20"
+            [attr.cy]="node.y + 22"
+            r="12"
+            [attr.fill]="node.color"
+            fill-opacity="0.15"
+            [attr.stroke]="node.color"
+            stroke-width="1"
+            stroke-opacity="0.5" />
+          <text
+            [attr.x]="node.x + 20"
+            [attr.y]="node.y + 26"
+            text-anchor="middle"
+            [attr.fill]="node.color"
+            font-size="10"
+            font-weight="700"
+            font-family="'JetBrains Mono', monospace">
+            {{ node.step.stepNumber }}
+          </text>
+
+          <!-- Type label -->
+          <text
+            [attr.x]="node.x + 40"
+            [attr.y]="node.y + 18"
+            [attr.fill]="node.color"
+            font-size="9"
+            font-weight="600"
+            font-family="'JetBrains Mono', monospace"
+            text-transform="uppercase"
+            letter-spacing="0.05em">
+            {{ typeLabel(node.step.type) }}
+          </text>
+
+          <!-- Action text -->
+          <text
+            [attr.x]="node.x + 40"
+            [attr.y]="node.y + 34"
+            fill="rgba(255,255,255,0.8)"
+            font-size="11"
+            font-family="'Inter', sans-serif">
+            {{ truncate(node.step.action, 26) }}
+          </text>
+
+          <!-- Duration + tokens (right side) -->
+          <text
+            [attr.x]="node.x + node.width - 12"
+            [attr.y]="node.y + 18"
+            text-anchor="end"
+            fill="rgba(255,255,255,0.4)"
+            font-size="9"
+            font-family="'JetBrains Mono', monospace">
+            {{ formatDuration(node.step.duration) }}
+          </text>
+          <text
+            [attr.x]="node.x + node.width - 12"
+            [attr.y]="node.y + 32"
+            text-anchor="end"
+            fill="rgba(255,255,255,0.3)"
+            font-size="9"
+            font-family="'JetBrains Mono', monospace">
+            {{ formatTokens(node.step.tokensUsed) }} tok
+          </text>
+
+          <!-- Tool name (if tool_call) -->
+          @if (node.step.toolCalled) {
+            <text
+              [attr.x]="node.x + 40"
+              [attr.y]="node.y + 50"
+              fill="#a855f7"
+              font-size="10"
+              font-family="'JetBrains Mono', monospace"
+              font-style="italic">
+              {{ truncate(node.step.toolCalled, 28) }}
+            </text>
+          }
+
+          <!-- Loop detection badge -->
+          @if (node.step.loopDetected) {
+            <rect
+              [attr.x]="node.x + node.width - 48"
+              [attr.y]="node.y + node.height - 22"
+              width="40"
+              height="16"
+              rx="4"
+              fill="rgba(239, 68, 68, 0.2)"
+              stroke="#ef4444"
+              stroke-width="1"
+              stroke-opacity="0.5" />
+            <text
+              [attr.x]="node.x + node.width - 28"
+              [attr.y]="node.y + node.height - 11"
+              text-anchor="middle"
+              fill="#ef4444"
+              font-size="8"
+              font-weight="700"
+              font-family="'JetBrains Mono', monospace">
+              LOOP
+            </text>
+          }
+
+          <!-- Confidence bar -->
+          @if (node.step.confidence != null && node.step.confidence > 0) {
+            <rect
+              [attr.x]="node.x + 12"
+              [attr.y]="node.y + node.height - 6"
+              [attr.width]="node.width - 24"
+              height="2"
+              rx="1"
+              fill="rgba(255,255,255,0.06)" />
+            <rect
+              [attr.x]="node.x + 12"
+              [attr.y]="node.y + node.height - 6"
+              [attr.width]="(node.width - 24) * (node.step.confidence / 100)"
+              height="2"
+              rx="1"
+              [attr.fill]="node.color"
+              fill-opacity="0.6" />
+          }
+
+          <!-- Status indicator dot -->
+          <circle
+            [attr.cx]="node.x + node.width - 14"
+            [attr.cy]="node.y + node.height / 2"
+            r="4"
+            [attr.fill]="node.statusColor"
+            [attr.fill-opacity]="node.step.status === 'pending' || node.step.status === 'skipped' ? 0.3 : 0.8" />
+        </g>
+      }
+    </svg>
+  }
+</div>

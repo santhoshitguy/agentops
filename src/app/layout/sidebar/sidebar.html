@@ -1,0 +1,179 @@
+<aside class="sidebar" [class.collapsed]="isCollapsed()">
+    <!-- Logo Section -->
+    <div class="sidebar-header">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <defs>
+                        <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#00d4ff" />
+                            <stop offset="100%" stop-color="#a855f7" />
+                        </linearGradient>
+                        <filter id="logo-glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="2" result="blur" />
+                            <feFlood flood-color="#00d4ff" flood-opacity="0.5" />
+                            <feComposite in2="blur" operator="in" />
+                            <feMerge>
+                                <feMergeNode />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <circle cx="16" cy="16" r="14" stroke="url(#logo-gradient)" stroke-width="2" fill="none"
+                        filter="url(#logo-glow)" />
+                    <path d="M16 8L20 14H12L16 8Z" fill="url(#logo-gradient)" />
+                    <circle cx="16" cy="20" r="4" fill="url(#logo-gradient)" />
+                    <line x1="16" y1="14" x2="16" y2="16" stroke="url(#logo-gradient)" stroke-width="2" />
+                </svg>
+            </div>
+            @if (!isCollapsed()) {
+            <div class="logo-text">
+                <span class="logo-title">AgentOps</span>
+                <span class="logo-subtitle">Pro</span>
+            </div>
+            }
+        </div>
+        <!-- <button class="collapse-btn" (click)="toggleCollapse()" [title]="isCollapsed() ? 'Expand' : 'Collapse'">
+            <lucide-icon [img]="isCollapsed() ? expandIcon : collapseIcon" [size]="18" color="currentColor" />
+        </button> -->
+        <button class="sidebar-close-btn" (click)="close.emit()" title="Close menu">
+            <lucide-icon [img]="collapseIcon" [size]="18" color="currentColor" />
+        </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+        <!-- CORE Section -->
+        @if (!isCollapsed()) {
+        <div class="nav-section-label">CORE</div>
+        }
+        @for (item of mainNav; track item.id) {
+        <a class="nav-item pt-2" [class.nav-item-pro]="item.pro" [routerLink]="item.route" routerLinkActive="active"
+            [title]="isCollapsed() ? item.label : ''">
+            <span class="nav-icon">
+                <lucide-icon [img]="item.icon" [size]="18" color="currentColor" />
+            </span>
+            @if (!isCollapsed()) {
+            <span class="nav-label">{{ item.label }}</span>
+            @if (item.pro) {
+            <span class="nav-badge badge-pro">
+                <lucide-icon [img]="lockIcon" [size]="8" color="currentColor" />
+                PRO
+            </span>
+            } @else if (item.badge) {
+            <span class="nav-badge">{{ item.badge }}</span>
+            }
+            }
+        </a>
+        }
+
+        <!-- INSIGHTS Section -->
+        @if (!isCollapsed()) {
+        <div class="nav-section-label">INSIGHTS</div>
+        }
+        @for (item of analyticsNav; track item.id) {
+        <a class="nav-item pt-2" [class.nav-item-pro]="item.pro" [routerLink]="item.route" routerLinkActive="active"
+            [title]="isCollapsed() ? item.label : ''">
+            <span class="nav-icon">
+                <lucide-icon [img]="item.icon" [size]="18" color="currentColor" />
+            </span>
+            @if (!isCollapsed()) {
+            <span class="nav-label">{{ item.label }}</span>
+            @if (item.pro) {
+            <span class="nav-badge badge-pro">
+                <lucide-icon [img]="lockIcon" [size]="8" color="currentColor" />
+                PRO
+            </span>
+            } @else if (item.badge) {
+            <span class="nav-badge" [class.badge-hot]="item.badge === 'HOT'" [class.badge-ai]="item.badge === 'AI'">{{
+                item.badge }}</span>
+            }
+            }
+        </a>
+        }
+
+        <!-- TOOLS Section -->
+        @if (!isCollapsed()) {
+        <div class="nav-section-label">TOOLS</div>
+        }
+        @for (item of toolsNav; track item.id) {
+        <a class="nav-item pt-2" [class.nav-item-pro]="item.pro" [routerLink]="item.route" routerLinkActive="active"
+            [title]="isCollapsed() ? item.label : ''">
+            <span class="nav-icon">
+                <lucide-icon [img]="item.icon" [size]="18" color="currentColor" />
+            </span>
+            @if (!isCollapsed()) {
+            <span class="nav-label">{{ item.label }}</span>
+            @if (item.pro) {
+            <span class="nav-badge badge-pro">
+                <lucide-icon [img]="lockIcon" [size]="8" color="currentColor" />
+                PRO
+            </span>
+            } @else if (item.badge) {
+            <span class="nav-badge" [class.badge-ab]="item.badge === 'A/B'">{{ item.badge }}</span>
+            }
+            }
+        </a>
+        }
+
+        <!-- SYSTEM Section -->
+        @if (!isCollapsed()) {
+        <div class="nav-section-label">SYSTEM</div>
+        }
+        @for (item of systemNav; track item.id) {
+        <a class="nav-item pt-2" [class.nav-item-pro]="item.pro" [routerLink]="item.route" routerLinkActive="active"
+            [title]="isCollapsed() ? item.label : ''">
+            <span class="nav-icon">
+                <lucide-icon [img]="item.icon" [size]="18" color="currentColor" />
+            </span>
+            @if (!isCollapsed()) {
+            <span class="nav-label">{{ item.label }}</span>
+            @if (item.pro) {
+            <span class="nav-badge badge-pro">
+                <lucide-icon [img]="lockIcon" [size]="8" color="currentColor" />
+                PRO
+            </span>
+            }
+            }
+        </a>
+        }
+    </nav>
+
+    <!-- Bottom Section -->
+    <div class="sidebar-footer">
+        @if (!isCollapsed()) {
+        <div class="system-status">
+            <div class="status-header">
+                <span class="status-dot active"></span>
+                <span>System Online</span>
+            </div>
+            <div class="status-metrics">
+                <div class="metric">
+                    <span class="metric-label">Agents</span>
+                    <span class="metric-value">{{ activeAgents() }}/{{ totalAgents() }}</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Uptime</span>
+                    <span class="metric-value">{{ uptime() }}</span>
+                </div>
+            </div>
+        </div>
+        }
+
+        <div class="user-section">
+            <div class="user-avatar">
+                <img [src]="userAvatar()" [alt]="userName()" />
+                <span class="user-status"></span>
+            </div>
+            @if (!isCollapsed()) {
+            <div class="user-info">
+                <span class="user-name">{{ userName() }}</span>
+                <span class="user-role">{{ userRole() }}</span>
+            </div>
+            <button class="settings-btn" (click)="onSettingsClick()">
+                <lucide-icon [img]="settingsIcon" [size]="16" color="currentColor" />
+            </button>
+            }
+        </div>
+    </div>
+</aside>

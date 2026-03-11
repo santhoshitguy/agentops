@@ -1,0 +1,117 @@
+<div class="flow-timeline-panel">
+    <div class="timeline-header">
+        <div class="header-title">
+            <lucide-icon [img]="clockIcon" [size]="16" color="var(--accent-cyan)" />
+            <span>Step Timeline</span>
+        </div>
+        <span class="step-count">{{ visibleSteps().length }} / {{ stepsSignal().length }} steps</span>
+    </div>
+
+    <div class="timeline-body">
+        @for (step of visibleSteps(); track step.stepNumber) {
+        <div class="timeline-step"
+            [class.active]="isActive(step)"
+            [class.expanded]="isExpanded(step.stepNumber)"
+            (click)="onStepClick(step)"
+            (mouseenter)="onStepMouseEnter(step.stepNumber)"
+            (mouseleave)="onStepMouseLeave()">
+
+            <!-- Connector line -->
+            <div class="step-connector">
+                <div class="connector-line" [style.background]="getTypeColor(step.type)"></div>
+                <div class="connector-dot"
+                    [style.background]="getStatusColor(step.status)"
+                    [style.box-shadow]="'0 0 8px ' + getStatusColor(step.status)">
+                    @if (step.status === 'active') {
+                    <div class="dot-pulse"></div>
+                    }
+                </div>
+            </div>
+
+            <!-- Step content -->
+            <div class="step-content">
+                <div class="step-header-row">
+                    <div class="step-type-badge" [style.color]="getTypeColor(step.type)"
+                        [style.background]="'color-mix(in srgb, ' + getTypeColor(step.type) + ' 12%, transparent)'">
+                        <lucide-icon [img]="getTypeIcon(step.type)" [size]="11" />
+                        <span>{{ getTypeLabel(step.type) }}</span>
+                    </div>
+                    <span class="step-number">#{{ step.stepNumber }}</span>
+                    <div class="step-meta-inline">
+                        <span class="meta-duration">{{ formatDuration(step.duration) }}</span>
+                        <span class="meta-tokens">{{ step.tokensUsed }} tok</span>
+                    </div>
+                    <lucide-icon
+                        [img]="isExpanded(step.stepNumber) ? chevronDownIcon : chevronRightIcon"
+                        [size]="13"
+                        color="var(--text-muted)" />
+                </div>
+
+                <div class="step-action">{{ truncateText(step.action, 80) }}</div>
+
+                <!-- Confidence bar -->
+                @if (step.confidence !== undefined && step.confidence !== null) {
+                <div class="step-confidence">
+                    <div class="confidence-track">
+                        <div class="confidence-fill"
+                            [style.width.%]="step.confidence * 100"
+                            [style.background]="getTypeColor(step.type)">
+                        </div>
+                    </div>
+                    <span class="confidence-label">{{ (step.confidence * 100).toFixed(0) }}%</span>
+                </div>
+                }
+
+                <!-- Loop indicator -->
+                @if (step.loopDetected) {
+                <div class="step-loop-badge">
+                    <lucide-icon [img]="loopIcon" [size]="10" color="var(--accent-orange)" />
+                    <span>Loop detected</span>
+                </div>
+                }
+
+                <!-- Expanded details -->
+                @if (isExpanded(step.stepNumber)) {
+                <div class="step-details">
+                    @if (step.reasoning) {
+                    <div class="detail-section">
+                        <span class="detail-label">Reasoning</span>
+                        <p class="detail-text">{{ step.reasoning }}</p>
+                    </div>
+                    }
+
+                    @if (step.toolCalled) {
+                    <div class="detail-section">
+                        <span class="detail-label">Tool</span>
+                        <code class="detail-tool">{{ step.toolCalled }}</code>
+                        @if (step.toolArgs) {
+                        <pre class="detail-args">{{ step.toolArgs }}</pre>
+                        }
+                    </div>
+                    }
+
+                    @if (step.result) {
+                    <div class="detail-section">
+                        <span class="detail-label">Result</span>
+                        <p class="detail-result">{{ truncateText(step.result, 300) }}</p>
+                    </div>
+                    }
+
+                    <div class="detail-footer">
+                        <span><lucide-icon [img]="clockIcon" [size]="10" /> {{ formatDuration(step.duration) }}</span>
+                        <span><lucide-icon [img]="coinsIcon" [size]="10" /> {{ step.tokensUsed }} tokens</span>
+                        @if (step.confidence !== undefined) {
+                        <span>Confidence: {{ (step.confidence * 100).toFixed(0) }}%</span>
+                        }
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+        } @empty {
+        <div class="empty-timeline">
+            <span>No steps to display</span>
+        </div>
+        }
+    </div>
+</div>
